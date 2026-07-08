@@ -36,7 +36,11 @@ function routinePour(dow) {
   const matin = [
     { h:"06h30", t:"Réveil", sub:"simulateur d'aube" },
     { h:"06h35", t:"👁️ Yoga des yeux", sub:"5 clignements conscients + 1 palming (1 min)", today:true },
+    // Acupression — réveil
+    { h:"06h35", type:"acu", t:"🤚 GI4 + Du20", sub:"Réveil : GI4 (1 min/main) + Du20 sommet du crâne (30 s, pression douce). Clarifie le réveil. ⚠️ Jamais Du20 le soir." },
     { h:"06h40", t:"💪 Stomach vacuum", sub:"2 min, 2–3 reps, cou relâché" },
+    // Acupression — pendant le vacuum
+    { h:"06h40", type:"acu", t:"🤚 CV17 pendant le vacuum", sub:"Main posée au centre de la poitrine, sans pression. Ouvre la respiration, soutient le diaphragme." },
     { h:"06h45", t:"☕ Café 1", sub:"noir bio" },
     // HE — Diffusion tonique au lever
     { h:"06h50", type:"he", t:"🌿 Diffusion tonique", sub:"Romarin 2 + Pin 2 + Menthe poivrée 1 — 10 min, pièce de vie. 🐱 Chat en bas → fenêtre ouverte.", today:true },
@@ -49,6 +53,7 @@ function routinePour(dow) {
   }
   if (jourCourse) {
     matin.push({ h:"08h05", type:"he", t:"🌿 Friction post-course", sub:"Laurier 4 + Gingembre 3 + Pin 2 + Immortelle 2 / 1 c.c. amande — adducteurs + cuisses. Immortelle : 1-2 gt suffisent.", today:true });
+    matin.push({ h:"08h10", type:"acu", t:"🤚 ST36 (2 min/jambe)", sub:"Post-course : 4 doigts sous la rotule, 1 pouce avant le tibia. Anti-inflammatoire (axe vague-surrénale). Le point des 100 maladies." });
   }
   matin.push({
     h:"08h30",
@@ -70,6 +75,8 @@ function routinePour(dow) {
         sub:`légumes crus + fruits + jus Kuvings + 1 goutte D3+K2 · ${jourCourse?"Jus B (cardio)":"Jus A ou B au choix"}`,
         today:jourCourse },
       { h:"14h15", t:"🍵 Matcha", sub:"1 c. à café (~2 g), eau 80 °C" },
+      // Acupression — reset parasympathique au matcha
+      { h:"14h15", type:"acu", t:"🤚 GI4 + PC6 (cohérence 5,5)", sub:"2 min : respiration 5 s inspire / 5 s expire. PC6 = 3 doigts au-dessus du pli du poignet. Reset parasympathique de mi-journée." },
       { h:"16h00", t:"🍫 Chocolat noir 85 %", sub:"20–30 g bio · DERNIÈRE caféine" },
     ]
   });
@@ -78,6 +85,8 @@ function routinePour(dow) {
   const soirItems = [
     { h:"18h00", t:"🍲 Souper", sub:"protéines + légumes cuits + glucides + Omega-3 + Mg + Ashwagandha" },
     { h:"18h10", t:"🚶 Marche post-prandiale", sub:"10 min (si temp. OK)" },
+    // Acupression — digestion en marchant
+    { h:"18h10", type:"acu", t:"🤚 SP6 (1 min/jambe)", sub:"En marchant, pression légère. 4 doigts au-dessus de la malléole interne, derrière le tibia. Aide la digestion. ⚠️ Blessure adducteur → membre sain uniquement." },
   ];
   if (bainRecup) {
     soirItems.push({ h:"20h30", type:"he", t:"🛁 Bain récupération sport",
@@ -85,10 +94,16 @@ function routinePour(dow) {
   }
   soirItems.push(
     { h:"21h00", t:"🧘 Étirements adducteurs", sub:"papillon + fente latérale + stomach vacuum · 2–3 min" },
+    // Acupression — 4 Barrières (optionnel)
+    { h:"21h00", type:"acu", t:"🤚 4 Barrières (GI4 + LR3) — optionnel", sub:"Jours de fatigue seulement. GI4 (mains) + LR3 (pieds) libèrent le Qi global. ⚠️ Membre sain si adducteur blessé." },
     { h:"21h00", type:"he", t:"🌿 Diffusion soirée", sub:"Orange douce 2 + Lavande 2 + Cèdre 1 — pièce. 🐱 Chat → fenêtre ouverte.", today:true },
     { h:"21h15", t:"👁️ Yoga des yeux", sub:"exercice de l'index + palming (anti-presbytie + nerf vague)" },
     { h:"21h30", t:"🫖 Tisane", sub:"fenouil/gingembre/cannelle si besoin" },
+    // Acupression — nourrir le Dantian
+    { h:"21h30", type:"acu", t:"🤚 CV4 (main posée)", sub:"3 doigts sous le nombril, main posée + respiration basse. Nourrit le Dantian inférieur, recharge le réservoir." },
     { h:"22h15", type:"he", t:"🌿 Massage coucher", sub:"Camomille noble 2 + Lavande 1 gt / 1 c.c. amande — épaules, cou, plexus. Camomille = ton n°1 sommeil.", today:true },
+    // Acupression — induction du sommeil
+    { h:"22h15", type:"acu", t:"🤚 HT7 + Yin Tang + KD1", sub:"Au lit : HT7 (1 min/main, pli externe du poignet) + Yin Tang (30 s, entre les sourcils) + KD1 (1 min/pied, plante). Induit le sommeil." },
     { h:"22h25", type:"he", t:"🌿 Spray oreiller", sub:"Camomille 8 + Lavande 6 + Néroli 3 gt / 30 ml eau — 2-3 pschitts (loin des yeux)", today:true },
     { h:"22h30", t:"🌙 Début jeûne nocturne", sub:"~14 h jusqu'à 8h30" },
   );
