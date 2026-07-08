@@ -130,9 +130,10 @@
   .bot{position:fixed; bottom:0; left:0; right:0; background:var(--bg); border-top:1px solid var(--line);
     padding:.55rem 1rem calc(.55rem + env(safe-area-inset-bottom,0px)); display:flex; gap:.6rem;
     max-width:640px; margin-inline:auto}
-  .bot button{flex:1; padding:.78rem; border:1px solid var(--line); border-radius:10px; background:var(--card);
-    color:var(--txt); font-size:.84rem; font-weight:700; cursor:pointer}
+  .bot button{flex:1; padding:.78rem .4rem; border:1px solid var(--line); border-radius:10px; background:var(--card);
+    color:var(--txt); font-size:.8rem; font-weight:700; cursor:pointer; min-width:0}
   .bot button:active{background:var(--card2)}
+  .bot button:disabled{opacity:.6; cursor:default}
 
   /* Bannière install */
   .install-banner{display:none; margin:.7rem 0 0; padding:.8rem 1rem; background:var(--acc-soft);
@@ -173,7 +174,8 @@
 </div>
 
 <div class="bot">
-  <button onclick="resetDay()">↻ Réinitialiser le jour</button>
+  <button onclick="forceUpdate()" title="Récupère la dernière version (garde tes cochages)">🔄 MAJ</button>
+  <button onclick="resetDay()" title="Efface les cochages du jour">↻ Jour</button>
   <button class="pri" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑ Haut</button>
 </div>
 
@@ -320,6 +322,41 @@ function resetDay(){
   if(!confirm("Réinitialiser la journée ? Les cochages du jour seront effacés.")) return;
   try{ localStorage.removeItem("done-"+key); localStorage.removeItem("closed-"+key); }catch(e){}
   render();
+}
+
+/* Force la mise à jour de l'app : déclenche le SW, prend le contrôle, recharge.
+   Les cochages du jour sont conservés (stockés par date dans localStorage). */
+function forceUpdate(){
+  const btn=event.target;
+  const original=btn.textContent;
+  btn.textContent="⏳…";
+  btn.disabled=true;
+  if("serviceWorker" in navigator){
+    navigator.serviceWorker.getRegistration().then(reg=>{
+      if(!reg){ location.reload(); return; }
+      // Demander au SW de vérifier les mises à jour
+      reg.update().then(()=>{
+        if(reg.waiting){
+          // Nouvelle version déjà téléchargée → la forcer à s'activer
+          reg.waiting.postMessage("SKIP_WAITING");
+        } else if(reg.installing){
+          // En cours d'installation → écouter la fin puis activer
+          reg.installing.addEventListener("statechange", ()=>{
+            if(reg.installing && reg.installing.state==="installed"){
+              reg.installing.postMessage("SKIP_WAITING");
+            }
+          });
+        } else {
+          // Rien de neuf côté SW → recharger quand même pour rafraîchir la page
+          location.reload();
+        }
+      }).catch(()=> location.reload());
+    });
+  } else {
+    location.reload();
+  }
+  // Filet de sécurité : si rien ne se passe après 4s, recharger
+  setTimeout(()=>{ if(!document.hidden) location.reload(); }, 4000);
 }
 
 /* Installation PWA */
