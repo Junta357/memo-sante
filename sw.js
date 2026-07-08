@@ -1,17 +1,15 @@
-/* Service Worker — Mémo Santé (offline-first)
-   Cache les fichiers de l'app pour fonctionnement hors-ligne total. */
-const CACHE = "memo-sante-v4";
+/* Service Worker — Mémo Santé (offline + mises à jour rapides)
+   Stratégie :
+   - network-first pour les fichiers principaux (index.html, routine.js, sw.js,
+     manifest) → les mises à jour sont vues dès la prochaine ouverture.
+   - cache-first pour les icônes (changent rarement, économise du réseau).
+   - Fallback offline : si le réseau échoue, on sert le cache. */
+const CACHE = "memo-sante-v5";
+const PRINCIPAUX = ["./","./index.html","./routine.js","./manifest.json","./sw.js"];
 const ASSETS = [
-  "./",
-  "./index.html",
-  "./routine.js",
-  "./manifest.json",
-  "./sw.js",
-  "./icons/icon-192.png",
-  "./icons/icon-512.png",
-  "./icons/icon-512-maskable.png",
-  "./icons/favicon-32.png",
-  "./icons/apple-touch-180.png"
+  ...PRINCIPAUX,
+  "./icons/icon-192.png","./icons/icon-512.png","./icons/icon-512-maskable.png",
+  "./icons/favicon-32.png","./icons/apple-touch-180.png"
 ];
 
 self.addEventListener("install", e=>{
@@ -28,19 +26,38 @@ self.addEventListener("activate", e=>{
   );
 });
 
+self.addEventListener("message", e=>{
+  if(e.data==="SKIP_WAITING") self.skipWaiting();
+});
+
 self.addEventListener("fetch", e=>{
   if(e.request.method !== "GET") return;
-  e.respondWith(
-    caches.match(e.request).then(hit=>{
-      if(hit) return hit;
-      return fetch(e.request).then(resp=>{
-        // Mettre en cache les nouvelles réponses OK
-        if(resp && resp.status===200 && resp.type==="basic"){
+  const url = new URL(e.request.url);
+  if(url.origin !== self.location.origin) return;
+
+  const isPrincipal = PRINCIPAUX.some(p=> url.pathname.endsWith(p.replace("./","/")) || url.pathname===p.replace("./","/"));
+
+  if(isPrincipal){
+    // Network-first : vérifie le réseau d'abord, met à jour le cache, fallback offline.
+    e.respondWith(
+      fetch(e.request).then(resp=>{
+        if(resp && resp.status===200){
           const copy = resp.clone();
           caches.open(CACHE).then(c=> c.put(e.request, copy));
         }
         return resp;
-      }).catch(()=> caches.match("./index.html"));
-    })
-  );
+      }).catch(()=> caches.match(e.request).then(hit=> hit || caches.match("./index.html")))
+    );
+  } else {
+    // Cache-first pour les icônes (stables).
+    e.respondWith(
+      caches.match(e.request).then(hit=> hit || fetch(e.request).then(resp=>{
+        if(resp && resp.status===200){
+          const copy = resp.clone();
+          caches.open(CACHE).then(c=> c.put(e.request, copy));
+        }
+        return resp;
+      }).catch(()=> caches.match("./index.html")))
+    );
+  }
 });
