@@ -16,6 +16,7 @@
   :root{
     --bg:#0f1a16; --card:#16241e; --card2:#1d2f27; --txt:#e8efe9; --mut:#8aa093;
     --acc:#4ec38a; --acc2:#f0b35e; --warn:#e06b5a; --line:#28403a; --done:#3a4a42;
+    --he:#7bc4a0; --he-bg:#1a2e26; --rec:#c9a96e; --rec-bg:#241f17;
     --safe:env(safe-area-inset-top,0px);
   }
   *{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
@@ -47,8 +48,8 @@
 
   ul.lst{list-style:none; margin:0; padding:0}
   .it{display:flex; align-items:flex-start; gap:.7rem; padding:.78rem 1rem; border-top:1px solid var(--line);
-    cursor:pointer; min-height:54px; transition:opacity .25s, transform .25s, max-height .3s, padding .3s, margin .3s;
-    overflow:hidden; max-height:120px}
+    cursor:pointer; min-height:54px; transition:opacity .25s, transform .25s, max-height .3s, padding .3s, margin .3s, background .2s;
+    overflow:hidden; max-height:140px}
   .it:first-child{border-top:none}
   .it .t{flex:1; font-size:.91rem; padding-top:.05rem}
   .it .t b{font-weight:700}
@@ -60,6 +61,23 @@
   .it.done .box{background:var(--acc); border-color:var(--acc); color:#0f1a16}
   .it.today .box{border-color:var(--acc2)}
   .it.removing{opacity:0; transform:translateX(20px); max-height:0; padding-top:0; padding-bottom:0; margin:0; border-top-color:transparent}
+
+  /* Types d'items */
+  .it.he{background:var(--he-bg)}
+  .it.he .box{border-color:var(--he)}
+  .it.he .h{color:var(--he)}
+  .it.he.done .box{background:var(--he); border-color:var(--he)}
+  .it.he .t b{color:var(--he)}
+
+  .it.alerte{background:#2a1715}
+  .it.alerte .box{border-color:var(--warn)}
+  .it.alerte .t b{color:var(--warn)}
+  .it.alerte .box::after{content:"!"; color:var(--warn); font-weight:900}
+
+  .it.recette{background:var(--rec-bg)}
+  .it.recette .box{border-color:var(--rec)}
+  .it.recette .t b{color:var(--rec)}
+  .it.recette .box::after{content:"℞"; color:var(--rec); font-size:.8rem}
 
   .pill{display:inline-block; font-size:.66rem; background:var(--card2); color:var(--acc2);
     padding:.1rem .4rem; border-radius:5px; margin-left:.2rem; vertical-align:middle; border:1px solid var(--line)}
@@ -84,6 +102,12 @@
   #done-screen .next{margin-top:1.5rem; padding:1rem; background:var(--card); border:1px solid var(--line);
     border-radius:12px; display:inline-block}
   #done-screen .next b{color:var(--acc2)}
+
+  /* Échéances */
+  .echeance{display:flex; gap:.6rem; padding:.6rem 1rem; border-top:1px solid var(--line); font-size:.8rem}
+  .echeance:first-child{border-top:none}
+  .echeance .d{color:var(--acc2); font-weight:700; min-width:5rem; font-size:.74rem}
+  .echeance.warn .d{color:var(--warn)}
 
   .bot{position:fixed; bottom:0; left:0; right:0; background:var(--bg); border-top:1px solid var(--line);
     padding:.55rem 1rem calc(.55rem + env(safe-area-inset-bottom,0px)); display:flex; gap:.6rem;
@@ -116,7 +140,7 @@
 </header>
 
 <div id="install-banner" class="install-banner">
-  <b>📌 Installe l'appli</b> pour l'avoir en icône sur ton bureau (ouvre le menu Chrome ⋮ → <i>Installer l'application</i>).
+  <b>📌 Installe l'appli</b> pour l'avoir en icône sur ton bureau (menu Chrome ⋮ → <i>Installer l'application</i>).
   <button id="btn-install">Installer maintenant</button>
 </div>
 
@@ -134,114 +158,30 @@
   <button class="pri" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑ Haut</button>
 </div>
 
+<script src="./routine.js"></script>
 <script>
 /* ============================================================
-   ROUTINE — données de la journée (avec conditions par jour)
-   dow : 0=dim,1=lun,2=mar,3=mer,4=jeu,5=ven,6=sam
+   LOGIQUE APP — charge les données depuis routine.js
    ============================================================ */
-const DAYS_LONG=["dimanche","lundi","mardi","mercredi","jeudi","vendredi","samedi"];
-const DAYS_SHORT=["dim","lun","mar","mer","jeu","ven","sam"];
+let today = new Date(); today.setHours(0,0,0,0);
+let key = today.toISOString().slice(0,10);
 
-function routineFor(dow){
-  const rhodiola = dow===3||dow===6;        // mer, sam
-  const tyrosine = [0,1,2,4,5].includes(dow); // dim,lun,mar,jeu,ven
-  const isRunDay = dow===1||dow===3||dow===5; // lun,mer,ven
-  const sardines = dow===2||dow===6;          // mar,sam
-  const yinYoga  = dow===5;                   // ven
-  const weekend  = dow===0||dow===6;
-
-  const matin = [
-    {h:"06h30", t:"Réveil", sub:"simulateur d'aube"},
-    {h:"06h35", t:"👁️ Yoga des yeux", sub:"5 clignements conscients + 1 palming (1 min)", today:true},
-    {h:"06h40", t:"💪 Stomach vacuum", sub:"2 min, 2–3 reps, cou relâché"},
-    {h:"06h45", t:"☕ Café 1", sub:"noir bio"},
-    {h:"07h00", t: weekend ? "🚶 Repos actif" : "🏃 Course 5–7,5 km",
-       sub: weekend ? "marche, vélo, stretching (pas de course)" : "ou repos actif si > 25 °C ressenti à 7h"},
-  ];
-  if(rhodiola) matin.push({h:"07h30", t:"💊 Rhodiola (à jeun)", sub:"pas de Tyrosine aujourd'hui", today:true});
-  matin.push({h:"08h30", t: tyrosine ? "💊 Tyrosine + encas" : "🍊 Encas post-course",
-     sub: tyrosine ? "1 orange bio + fromage d'abbaye (pas de Rhodiola aujourd'hui)" : "1 orange bio + morceau fromage d'abbaye",
-     today: tyrosine});
-  matin.push({h:"08h45", t:"🍵 Thé vert", sub:"1 tasse"});
-
-  const jour = [
-    {h:"10h00", t:"☕ Café 2 + noix 30 g", sub:"mélange + noix du Brésil = 1 SEULE/jour"},
-    {h:"13h00", t:"💊 Spiruline Blue Bio", sub:"2 gélules, à jeun"},
-    {h:"14h00", t:"🥗 Repas 1 + D3+K2", sub:`légumes crus + fruits + jus Kuvings + 1 goutte D3+K2 · ${isRunDay?"Jus B (cardio)":"Jus A ou B au choix"}`, today:isRunDay},
-    {h:"14h15", t:"🍵 Matcha", sub:"1 c. à café (~2 g), eau 80 °C"},
-    {h:"16h00", t:"🍫 Chocolat noir 85 %", sub:"20–30 g bio · DERNIÈRE caféine"},
-  ];
-
-  const soir = [
-    {h:"18h00", t:"🍲 Souper", sub:"protéines + légumes cuits + glucides + Omega-3 + Mg + Ashwagandha"},
-    {h:"18h10", t:"🚶 Marche post-prandiale", sub:"10 min (si temp. OK)"},
-    {h:"21h00", t:"🧘 Étirements adducteurs", sub:"papillon + fente latérale + stomach vacuum · 2–3 min"},
-    {h:"21h15", t:"👁️ Yoga des yeux", sub:"exercice de l'index + palming (anti-presbytie + nerf vague)"},
-    {h:"21h30", t:"🫖 Tisane", sub:"fenouil/gingembre/cannelle si besoin"},
-    {h:"22h30", t:"🌙 Début jeûne nocturne", sub:"~14 h jusqu'à 8h30"},
-  ];
-  if(yinYoga) soir.push({h:"21h45", t:"🧘 Yoga Yin", sub:"30 min (vendredi soir)", today:true});
-
-  const sections = [
-    {title:"🌅 Matin", items:matin, open:true},
-    {title:"🌤️ Journée", items:jour, open:true},
-    {title:"🌆 Soir", items:soir, open:true},
-    {title:"💧 Hydratation", items:[
-      {h:"", t:"Eau Mont Roucous", sub:"1,5 à 3 L/jour (été → viser haut)"},
-      {h:"", t:"Vichy Célestins 500 ml", sub:"après la course"},
-    ], open:false},
-    {title:"🖥️ Écran", items:[
-      {h:"", t:"Règle 20-20-20", sub:"toutes les 20 min → regard à 6 m pendant 20 s"},
-      {h:"", t:"Post-it « CLIGNE »", sub:"viser 15 clignements/min"},
-    ], open:false},
-  ];
-
-  // Items spécifiques au jour (section dédiée)
-  const dayItems=[];
-  if(isRunDay) dayItems.push({h:"", t:"🏃 Jour de course", sub:"privilégie le Jus B au repas 1", today:true});
-  if(sardines) dayItems.push({h:"", t:"🐟 Sardines", sub:"1 boîte au souper", today:true});
-  if(yinYoga) dayItems.push({h:"", t:"🧘 Yoga Yin 30 min", sub:"ce soir", today:true});
-  if(weekend) dayItems.push({h:"", t:"🚶 Repos actif", sub:"marche, vélo, stretching", today:true});
-  if(dayItems.length) sections.push({title:"📅 Spécifique au jour", items:dayItems, open:true});
-
-  sections.push({title:"🛡️ Signaux d'alerte", items:[
-    {h:"", t:"Météo > 25 °C à 7h", sub:"pas de course → fractionné ou repos", alert:true},
-    {h:"", t:"Adducteur > 3/10 ou boiterie", sub:"réduire / marcher, étirements obligatoires", alert:true},
-    {h:"", t:"Anxiété, palpitations, insomnie", sub:"réduire caféine et/ou Tyrosine/Rhodiola", alert:true},
-    {h:"", t:"Transit trop rapide", sub:"réduire magnésium", alert:true},
-  ], open:false});
-
-  return sections;
-}
-
-/* ============================================================
-   ÉTAT & PERSISTANCE
-   ============================================================ */
-function dateKey(d){ return d.toISOString().slice(0,10); }
 function frDate(d){ return d.toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"}); }
-
-let today = new Date();
-today.setHours(0,0,0,0);
-let key = dateKey(today);
-
 function loadDone(){ try{return JSON.parse(localStorage.getItem("done-"+key))||{};}catch(e){return{}} }
 function saveDone(s){ try{localStorage.setItem("done-"+key, JSON.stringify(s));}catch(e){} }
 function isClosed(){ return localStorage.getItem("closed-"+key)==="1"; }
 function setClosed(){ try{localStorage.setItem("closed-"+key,"1");}catch(e){} }
 
-/* ============================================================
-   RENDU
-   ============================================================ */
 const app = document.getElementById("app");
 const doneScreen = document.getElementById("done-screen");
 
 function buildItemHTML(it, idx){
   const cls = ["it"];
+  if(it.type) cls.push(it.type);     // he, alerte, recette
   if(it.today) cls.push("today");
-  if(it.alert) cls.push("alert");
   const h = it.h ? `<span class="h">${it.h}</span>` : "";
   const sub = it.sub ? `<span class="sub">${it.sub}</span>` : "";
-  const icon = it.alert ? "!" : "✓";
+  const icon = it.type==="alerte" ? "" : (it.type==="recette" ? "" : "✓");
   return `<li class="it ${cls.join(" ")}" data-idx="${idx}">
     <span class="box">${icon}</span>
     <span class="t">${h}<b>${it.t}</b>${sub}</span>
@@ -250,12 +190,10 @@ function buildItemHTML(it, idx){
 
 function render(){
   const dow = today.getDay();
-  const sections = routineFor(dow);
+  const sections = routinePour(dow);
 
-  // En-tête date
   document.getElementById("hd-day").textContent = frDate(today);
 
-  // Écran terminé ?
   if(isClosed()){
     app.style.display="none";
     doneScreen.style.display="block";
@@ -267,33 +205,36 @@ function render(){
   app.style.display="block";
   doneScreen.style.display="none";
 
-  // Compter items réels (hors alertes? non, on compte tout sauf la clôture)
-  let total=0;
-  sections.forEach(s=> total += s.items.length);
-
-  // Construire le HTML
   let html="";
   let globalIdx=0;
   sections.forEach(sec=>{
-    html += `<details class="sec" ${sec.open?"open":""}><summary>${sec.title}<span class="cnt" data-cnt></span><span class="chev">▶</span></summary><ul class="lst">`;
+    html += `<details class="sec" ${sec.open?"open":""}><summary>${sec.titre}<span class="cnt" data-cnt></span><span class="chev">▶</span></summary><ul class="lst">`;
     sec.items.forEach(it=>{
       html += buildItemHTML(it, globalIdx++);
     });
     html += `</ul></details>`;
   });
 
-  // Ligne de clôture (toujours en dernier, hors sections)
+  // Échéances
+  if(typeof ECHEANCES !== "undefined" && ECHEANCES.length){
+    html += `<details class="sec"><summary>⚡ Échéances<span class="chev">▶</span></summary>`;
+    ECHEANCES.forEach(e=>{
+      html += `<div class="echeance ${e.warn?"warn":""}"><span class="d">${e.date}</span><span>${e.t}</span></div>`;
+    });
+    html += `</details>`;
+  }
+
+  // Ligne de clôture
   html += `<div class="close-row">
     <ul class="lst"><li class="it" data-close="1">
       <span class="box">✓</span>
       <span class="t"><b>✅ Journée terminée — clôturer</b><span class="sub">Coche ici pour passer au jour suivant (même si tout n'est pas coché).</span></span>
     </li></ul>
-    <div class="close-hint">Dernière action du jour. À utiliser quand tu consideres ta journée finie.</div>
+    <div class="close-hint">Dernière action du jour.</div>
   </div>`;
 
   app.innerHTML = html;
 
-  // Restaurer l'état coché + appliquer disparition
   const done = loadDone();
   document.querySelectorAll(".it").forEach(el=>{
     const idx = el.dataset.idx;
@@ -301,18 +242,16 @@ function render(){
     const id = close ? "close" : idx;
     if(done[id]){
       el.classList.add("done");
-      // Les items déjà faits disparaissent au chargement
       if(!close) el.classList.add("removing");
     }
   });
 
-  // Attacher les clics
   document.querySelectorAll(".it").forEach(el=>{
     el.addEventListener("click", ()=> onItemClick(el));
   });
 
   updateCounts();
-  updateProg(total);
+  updateProg();
 }
 
 function onItemClick(el){
@@ -322,10 +261,8 @@ function onItemClick(el){
   const done = loadDone();
 
   if(close){
-    // Clôture de journée
     el.classList.add("done");
     done["close"]=1; saveDone(done);
-    updateProg();
     setTimeout(()=>{
       setClosed();
       render();
@@ -334,7 +271,6 @@ function onItemClick(el){
     return;
   }
 
-  // Item normal : cocher puis faire disparaître
   el.classList.add("done");
   done[idx]=1; saveDone(done);
   updateCounts();
@@ -352,12 +288,12 @@ function updateCounts(){
   });
 }
 
-function updateProg(total){
-  const all = document.querySelectorAll(".it:not([data-close])");
-  if(total===undefined) total=all.length;
-  const done = document.querySelectorAll(".it.done:not([data-close])");
-  const pct = total?Math.round(done.length/total*100):0;
-  document.getElementById("prog").textContent = done.length+"/"+total;
+function updateProg(){
+  const all = document.querySelectorAll(".it:not([data-close]):not(.alerte):not(.recette)");
+  const doneN = document.querySelectorAll(".it.done:not([data-close]):not(.alerte):not(.recette)");
+  const total = all.length;
+  const pct = total?Math.round(doneN.length/total*100):0;
+  document.getElementById("prog").textContent = doneN.length+"/"+total;
   document.getElementById("bar").style.width = pct+"%";
 }
 
@@ -367,13 +303,10 @@ function resetDay(){
   render();
 }
 
-/* ============================================================
-   INSTALLATION PWA (beforeinstallprompt)
-   ============================================================ */
+/* Installation PWA */
 let deferredPrompt=null;
 window.addEventListener("beforeinstallprompt", e=>{
-  e.preventDefault();
-  deferredPrompt=e;
+  e.preventDefault(); deferredPrompt=e;
   document.getElementById("install-banner").style.display="block";
 });
 document.getElementById("btn-install").addEventListener("click", async ()=>{
@@ -384,20 +317,18 @@ document.getElementById("btn-install").addEventListener("click", async ()=>{
   document.getElementById("install-banner").style.display="none";
 });
 
-/* ============================================================
-   SERVICE WORKER (offline)
-   ============================================================ */
+/* Service Worker */
 if("serviceWorker" in navigator){
   window.addEventListener("load", ()=>{
     navigator.serviceWorker.register("./sw.js").catch(()=>{});
   });
 }
 
-/* Vérifier le changement de date (si l'app reste ouverte passé minuit) */
+/* Vérif changement de date (passé minuit) */
 setInterval(()=>{
   const now = new Date(); now.setHours(0,0,0,0);
   if(now.getTime() !== today.getTime()){
-    today = now; key = dateKey(today);
+    today = now; key = today.toISOString().slice(0,10);
     render();
   }
 }, 60000);
