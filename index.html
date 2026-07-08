@@ -28,6 +28,8 @@
     --acc-soft:#3a2a1d;      /* halo orange sombre */
     --he:#7fb087;            /* vert sauge lumineux sur sombre */
     --he-bg:#212a21;         /* fond vert sombre très doux */
+    --acu:#c9a96a;           /* ambre lumineux (acupression) */
+    --acu-bg:#2a2418;        /* fond ambre sombre */
     --rec:#d4a96e;           /* bronze lumineux (recettes) */
     --rec-bg:#2c2319;        /* fond bronze sombre */
     --alert:#d49a72;         /* terracotta doux (pas de rouge) */
@@ -88,6 +90,14 @@
   .it.he .h{color:var(--he)}
   .it.he.done .box{background:var(--he); border-color:var(--he); color:#fff}
   .it.he .t b{color:var(--he)}
+
+  .it.acu{background:var(--acu-bg)}
+  .it.acu .box{border-color:var(--acu)}
+  .it.acu .h{color:var(--acu)}
+  .it.acu.done .box{background:var(--acu); border-color:var(--acu); color:#1a140c}
+  .it.acu .t b{color:var(--acu)}
+  .it.acu .box::after{content:"•"; color:var(--acu); font-size:1.2rem}
+  .it.acu.done .box::after{content:""}
 
   .it.alerte{background:var(--alert-bg)}
   .it.alerte .box{border-color:var(--alert); background:var(--alert-bg)}
@@ -395,8 +405,8 @@ function updateCounts(){
 }
 
 function updateProg(){
-  const all = document.querySelectorAll(".it:not([data-close]):not(.alerte):not(.recette)");
-  const doneN = document.querySelectorAll(".it.done:not([data-close]):not(.alerte):not(.recette)");
+  const all = document.querySelectorAll(".it:not([data-close]):not(.alerte):not(.recette):not(.acu)");
+  const doneN = document.querySelectorAll(".it.done:not([data-close]):not(.alerte):not(.recette):not(.acu)");
   const total = all.length;
   const pct = total?Math.round(doneN.length/total*100):0;
   document.getElementById("prog").textContent = doneN.length+"/"+total;
