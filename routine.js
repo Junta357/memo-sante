@@ -9,6 +9,39 @@
 // dow : 0=dimanche, 1=lundi, 2=mardi, 3=mercredi, 4=jeudi, 5=vendredi, 6=samedi
 const JOURS = ["dimanche","lundi","mardi","mercredi","jeudi","vendredi","samedi"];
 
+// Les 17 croyances pilotes (5 présent + 5 objectifs + 7 excellence) — rotation quotidienne
+const CROYANCES = [
+  // 5 croyances du présent
+  "Je prends du recul : « Est-ce que j'ai le temps de prendre une tasse de thé ? »",
+  "Apprendre me rend heureux.",
+  "J'ancre mes souvenirs avec mes 5 sens.",
+  "Je communique de façon positive et bienveillante.",
+  "Je me couche et me lève à heure régulière.",
+  // 5 croyances d'accomplissement
+  "Je suis en bonne santé.",
+  "Je prends du temps pour bien faire.",
+  "Je trouve la méthode qui me convient.",
+  "Je suis le chemin que je me suis tracé.",
+  "Les résultats sont obtenus rapidement.",
+  // 7 croyances de l'excellence
+  "Tout événement se produit pour une raison précise et doit me servir.",
+  "L'échec n'existe pas, seul existe les résultats.",
+  "Quoiqu'il arrive, j'en assume la responsabilité.",
+  "Il n'est pas nécessaire de tout comprendre pour tout utiliser.",
+  "Les êtres humains sont ma plus grande ressource.",
+  "Le travail est un jeu.",
+  "Il n'y a pas de réussite durable sans engagement.",
+];
+
+// Croyance du jour : rotation basée sur le jour de l'année
+function croyanceDuJour(){
+  const d = new Date();
+  const debutAnnee = new Date(d.getFullYear(),0,0);
+  const diff = d - debutAnnee;
+  const jourAnnee = Math.floor(diff / 86400000);
+  return CROYANCES[jourAnnee % CROYANCES.length];
+}
+
 function routinePour(dow) {
   // --- Conditions du jour ---
   const rhodiola = dow===3 || dow===6;         // mer, sam
@@ -23,6 +56,8 @@ function routinePour(dow) {
 
   /* ====== AUJOURD'HUI (contexte immédiat, en premier) ====== */
   const dayItems = [];
+  // Croyance du jour (rotation 17 croyances) — en tête
+  dayItems.push({ h:"", type:"croy", t:"✦ Croyance du jour", sub:croyanceDuJour() + " — un rappel à laisser résonner aujourd'hui. (Trilogie Liberté)" });
   if (weekend)      dayItems.push({ h:"", t:"🚶 Repos actif", sub:"marche, vélo, stretching — pas de course", today:true });
   else              dayItems.push({ h:"", t:"🏃 Jour de course", sub:"5–7,5 km · privilégie le Jus B au repas 1 + friction post-course", today:true });
   if (rhodiola)     dayItems.push({ h:"", t:"💊 Rhodiola aujourd'hui", sub:"7h30 à jeun · pas de Tyrosine aujourd'hui", today:true });
