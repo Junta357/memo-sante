@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0f1a16">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Mémo Santé">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="manifest" href="./manifest.json">
+<link rel="icon" type="image/png" sizes="32x32" href="./icons/favicon-32.png">
+<link rel="apple-touch-icon" href="./icons/apple-touch-180.png">
+<title>Mémo Santé</title>
+<style>
+  :root{
+    --bg:#0f1a16; --card:#16241e; --card2:#1d2f27; --txt:#e8efe9; --mut:#8aa093;
+    --acc:#4ec38a; --acc2:#f0b35e; --warn:#e06b5a; --line:#28403a; --done:#3a4a42;
+    --safe:env(safe-area-inset-top,0px);
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+  html,body{margin:0; padding:0; background:var(--bg); overscroll-behavior-y:none}
+  body{font-family:-apple-system,"Segoe UI",Roboto,system-ui,sans-serif; color:var(--txt);
+    font-size:16px; line-height:1.45; padding:calc(.6rem + var(--safe)) .75rem 6rem;
+    max-width:640px; margin-inline:auto; -webkit-font-smoothing:antialiased}
+
+  header{position:sticky; top:0; z-index:10; background:var(--bg); margin:0 -.75rem;
+    padding:.6rem .9rem calc(.6rem + var(--safe)); border-bottom:1px solid var(--line);
+    display:flex; align-items:center; justify-content:space-between; gap:.6rem}
+  header .ttl{display:flex; align-items:center; gap:.5rem}
+  header .logo{width:30px; height:30px; border-radius:8px; object-fit:cover}
+  header h1{font-size:1.02rem; margin:0; font-weight:800; letter-spacing:.01em}
+  header .day{font-size:.76rem; color:var(--mut); margin-top:.05rem; text-transform:capitalize}
+  #prog{font-size:.72rem; color:var(--mut); text-align:right; min-width:4.5rem; font-variant-numeric:tabular-nums}
+  .bar{height:6px; background:var(--card2); border-radius:4px; overflow:hidden; margin-top:.3rem; width:5rem}
+  .bar i{display:block; height:100%; width:0; background:linear-gradient(90deg,var(--acc),var(--acc2)); transition:width .3s}
+
+  .sec{margin:.7rem 0 0; background:var(--card); border:1px solid var(--line); border-radius:14px; overflow:hidden}
+  .sec>summary{list-style:none; cursor:pointer; padding:.8rem 1rem; display:flex; align-items:center; gap:.55rem;
+    font-weight:700; font-size:.92rem}
+  .sec>summary::-webkit-details-marker{display:none}
+  .sec>summary .chev{margin-left:auto; transition:transform .2s; color:var(--mut); font-size:.75rem}
+  .sec[open]>summary .chev{transform:rotate(90deg)}
+  .sec[open]>summary{border-bottom:1px solid var(--line)}
+  .sec .cnt{font-size:.72rem; color:var(--mut); font-weight:600; margin-left:auto; margin-right:.5rem}
+  .sec.empty{display:none}
+
+  ul.lst{list-style:none; margin:0; padding:0}
+  .it{display:flex; align-items:flex-start; gap:.7rem; padding:.78rem 1rem; border-top:1px solid var(--line);
+    cursor:pointer; min-height:54px; transition:opacity .25s, transform .25s, max-height .3s, padding .3s, margin .3s;
+    overflow:hidden; max-height:120px}
+  .it:first-child{border-top:none}
+  .it .t{flex:1; font-size:.91rem; padding-top:.05rem}
+  .it .t b{font-weight:700}
+  .it .t .sub{display:block; color:var(--mut); font-size:.76rem; margin-top:.12rem}
+  .it .h{display:inline-block; min-width:2.5rem; font-variant-numeric:tabular-nums; color:var(--acc);
+    font-weight:700; font-size:.8rem; margin-right:.3rem}
+  .box{flex:0 0 auto; width:30px; height:30px; border:2px solid var(--line); border-radius:9px;
+    display:grid; place-items:center; font-size:1rem; color:transparent; transition:.15s; margin-top:.02rem}
+  .it.done .box{background:var(--acc); border-color:var(--acc); color:#0f1a16}
+  .it.today .box{border-color:var(--acc2)}
+  .it.removing{opacity:0; transform:translateX(20px); max-height:0; padding-top:0; padding-bottom:0; margin:0; border-top-color:transparent}
+
+  .pill{display:inline-block; font-size:.66rem; background:var(--card2); color:var(--acc2);
+    padding:.1rem .4rem; border-radius:5px; margin-left:.2rem; vertical-align:middle; border:1px solid var(--line)}
+
+  .note{padding:.65rem 1rem; font-size:.78rem; color:var(--mut); border-top:1px solid var(--line)}
+  .note b{color:var(--txt)}
+  .warn{color:var(--warn); font-weight:700}
+
+  /* Ligne de clôture */
+  .close-row{margin:.9rem .9rem 0; background:linear-gradient(135deg,#1d2f27,#243a30);
+    border:1px solid var(--acc); border-radius:14px; overflow:hidden}
+  .close-row .it{border-top:none}
+  .close-row .it .box{border-color:var(--acc)}
+  .close-row .it.done .box{background:var(--acc)}
+  .close-hint{padding:.55rem 1rem .7rem; font-size:.74rem; color:var(--mut); text-align:center}
+
+  /* Écran journée terminée */
+  #done-screen{display:none; text-align:center; padding:3rem 1.5rem}
+  #done-screen .big{font-size:3.4rem; margin-bottom:.5rem}
+  #done-screen h2{font-size:1.3rem; margin:.3rem 0; color:var(--acc)}
+  #done-screen p{color:var(--mut); font-size:.9rem; margin:.4rem 0}
+  #done-screen .next{margin-top:1.5rem; padding:1rem; background:var(--card); border:1px solid var(--line);
+    border-radius:12px; display:inline-block}
+  #done-screen .next b{color:var(--acc2)}
+
+  .bot{position:fixed; bottom:0; left:0; right:0; background:var(--bg); border-top:1px solid var(--line);
+    padding:.55rem 1rem calc(.55rem + env(safe-area-inset-bottom,0px)); display:flex; gap:.6rem;
+    max-width:640px; margin-inline:auto}
+  .bot button{flex:1; padding:.78rem; border:1px solid var(--line); border-radius:10px; background:var(--card);
+    color:var(--txt); font-size:.84rem; font-weight:700; cursor:pointer}
+  .bot button:active{background:var(--card2)}
+
+  .install-banner{display:none; margin:.7rem 0 0; padding:.8rem 1rem; background:var(--card2);
+    border:1px solid var(--acc); border-radius:12px; font-size:.82rem}
+  .install-banner b{color:var(--acc)}
+  .install-banner button{margin-top:.5rem; padding:.55rem .9rem; background:var(--acc); color:#0f1a16;
+    border:none; border-radius:8px; font-weight:700; font-size:.82rem; cursor:pointer; width:100%}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="ttl">
+    <img class="logo" src="./icons/icon-192.png" alt="">
+    <div>
+      <h1>Mémo Santé</h1>
+      <div class="day" id="hd-day">—</div>
+    </div>
+  </div>
+  <div>
+    <div id="prog">0/0</div>
+    <div class="bar"><i id="bar"></i></div>
+  </div>
+</header>
+
+<div id="install-banner" class="install-banner">
+  <b>📌 Installe l'appli</b> pour l'avoir en icône sur ton bureau (ouvre le menu Chrome ⋮ → <i>Installer l'application</i>).
+  <button id="btn-install">Installer maintenant</button>
+</div>
+
+<main id="app"></main>
+
+<div id="done-screen">
+  <div class="big">🌙</div>
+  <h2>Journée clôturée</h2>
+  <p id="done-msg">Bien joué. Repose-toi.</p>
+  <div class="next">À demain<br><b id="next-date">—</b></div>
+</div>
+
+<div class="bot">
+  <button onclick="resetDay()">↻ Réinitialiser le jour</button>
+  <button class="pri" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑ Haut</button>
+</div>
+
+<script>
+/* ============================================================
+   ROUTINE — données de la journée (avec conditions par jour)
+   dow : 0=dim,1=lun,2=mar,3=mer,4=jeu,5=ven,6=sam
+   ============================================================ */
+const DAYS_LONG=["dimanche","lundi","mardi","mercredi","jeudi","vendredi","samedi"];
+const DAYS_SHORT=["dim","lun","mar","mer","jeu","ven","sam"];
+
+function routineFor(dow){
+  const rhodiola = dow===3||dow===6;        // mer, sam
+  const tyrosine = [0,1,2,4,5].includes(dow); // dim,lun,mar,jeu,ven
+  const isRunDay = dow===1||dow===3||dow===5; // lun,mer,ven
+  const sardines = dow===2||dow===6;          // mar,sam
+  const yinYoga  = dow===5;                   // ven
+  const weekend  = dow===0||dow===6;
+
+  const matin = [
+    {h:"06h30", t:"Réveil", sub:"simulateur d'aube"},
+    {h:"06h35", t:"👁️ Yoga des yeux", sub:"5 clignements conscients + 1 palming (1 min)", today:true},
+    {h:"06h40", t:"💪 Stomach vacuum", sub:"2 min, 2–3 reps, cou relâché"},
+    {h:"06h45", t:"☕ Café 1", sub:"noir bio"},
+    {h:"07h00", t: weekend ? "🚶 Repos actif" : "🏃 Course 5–7,5 km",
+       sub: weekend ? "marche, vélo, stretching (pas de course)" : "ou repos actif si > 25 °C ressenti à 7h"},
+  ];
+  if(rhodiola) matin.push({h:"07h30", t:"💊 Rhodiola (à jeun)", sub:"pas de Tyrosine aujourd'hui", today:true});
+  matin.push({h:"08h30", t: tyrosine ? "💊 Tyrosine + encas" : "🍊 Encas post-course",
+     sub: tyrosine ? "1 orange bio + fromage d'abbaye (pas de Rhodiola aujourd'hui)" : "1 orange bio + morceau fromage d'abbaye",
+     today: tyrosine});
+  matin.push({h:"08h45", t:"🍵 Thé vert", sub:"1 tasse"});
+
+  const jour = [
+    {h:"10h00", t:"☕ Café 2 + noix 30 g", sub:"mélange + noix du Brésil = 1 SEULE/jour"},
+    {h:"13h00", t:"💊 Spiruline Blue Bio", sub:"2 gélules, à jeun"},
+    {h:"14h00", t:"🥗 Repas 1 + D3+K2", sub:`légumes crus + fruits + jus Kuvings + 1 goutte D3+K2 · ${isRunDay?"Jus B (cardio)":"Jus A ou B au choix"}`, today:isRunDay},
+    {h:"14h15", t:"🍵 Matcha", sub:"1 c. à café (~2 g), eau 80 °C"},
+    {h:"16h00", t:"🍫 Chocolat noir 85 %", sub:"20–30 g bio · DERNIÈRE caféine"},
+  ];
+
+  const soir = [
+    {h:"18h00", t:"🍲 Souper", sub:"protéines + légumes cuits + glucides + Omega-3 + Mg + Ashwagandha"},
+    {h:"18h10", t:"🚶 Marche post-prandiale", sub:"10 min (si temp. OK)"},
+    {h:"21h00", t:"🧘 Étirements adducteurs", sub:"papillon + fente latérale + stomach vacuum · 2–3 min"},
+    {h:"21h15", t:"👁️ Yoga des yeux", sub:"exercice de l'index + palming (anti-presbytie + nerf vague)"},
+    {h:"21h30", t:"🫖 Tisane", sub:"fenouil/gingembre/cannelle si besoin"},
+    {h:"22h30", t:"🌙 Début jeûne nocturne", sub:"~14 h jusqu'à 8h30"},
+  ];
+  if(yinYoga) soir.push({h:"21h45", t:"🧘 Yoga Yin", sub:"30 min (vendredi soir)", today:true});
+
+  const sections = [
+    {title:"🌅 Matin", items:matin, open:true},
+    {title:"🌤️ Journée", items:jour, open:true},
+    {title:"🌆 Soir", items:soir, open:true},
+    {title:"💧 Hydratation", items:[
+      {h:"", t:"Eau Mont Roucous", sub:"1,5 à 3 L/jour (été → viser haut)"},
+      {h:"", t:"Vichy Célestins 500 ml", sub:"après la course"},
+    ], open:false},
+    {title:"🖥️ Écran", items:[
+      {h:"", t:"Règle 20-20-20", sub:"toutes les 20 min → regard à 6 m pendant 20 s"},
+      {h:"", t:"Post-it « CLIGNE »", sub:"viser 15 clignements/min"},
+    ], open:false},
+  ];
+
+  // Items spécifiques au jour (section dédiée)
+  const dayItems=[];
+  if(isRunDay) dayItems.push({h:"", t:"🏃 Jour de course", sub:"privilégie le Jus B au repas 1", today:true});
+  if(sardines) dayItems.push({h:"", t:"🐟 Sardines", sub:"1 boîte au souper", today:true});
+  if(yinYoga) dayItems.push({h:"", t:"🧘 Yoga Yin 30 min", sub:"ce soir", today:true});
+  if(weekend) dayItems.push({h:"", t:"🚶 Repos actif", sub:"marche, vélo, stretching", today:true});
+  if(dayItems.length) sections.push({title:"📅 Spécifique au jour", items:dayItems, open:true});
+
+  sections.push({title:"🛡️ Signaux d'alerte", items:[
+    {h:"", t:"Météo > 25 °C à 7h", sub:"pas de course → fractionné ou repos", alert:true},
+    {h:"", t:"Adducteur > 3/10 ou boiterie", sub:"réduire / marcher, étirements obligatoires", alert:true},
+    {h:"", t:"Anxiété, palpitations, insomnie", sub:"réduire caféine et/ou Tyrosine/Rhodiola", alert:true},
+    {h:"", t:"Transit trop rapide", sub:"réduire magnésium", alert:true},
+  ], open:false});
+
+  return sections;
+}
+
+/* ============================================================
+   ÉTAT & PERSISTANCE
+   ============================================================ */
+function dateKey(d){ return d.toISOString().slice(0,10); }
+function frDate(d){ return d.toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"}); }
+
+let today = new Date();
+today.setHours(0,0,0,0);
+let key = dateKey(today);
+
+function loadDone(){ try{return JSON.parse(localStorage.getItem("done-"+key))||{};}catch(e){return{}} }
+function saveDone(s){ try{localStorage.setItem("done-"+key, JSON.stringify(s));}catch(e){} }
+function isClosed(){ return localStorage.getItem("closed-"+key)==="1"; }
+function setClosed(){ try{localStorage.setItem("closed-"+key,"1");}catch(e){} }
+
+/* ============================================================
+   RENDU
+   ============================================================ */
+const app = document.getElementById("app");
+const doneScreen = document.getElementById("done-screen");
+
+function buildItemHTML(it, idx){
+  const cls = ["it"];
+  if(it.today) cls.push("today");
+  if(it.alert) cls.push("alert");
+  const h = it.h ? `<span class="h">${it.h}</span>` : "";
+  const sub = it.sub ? `<span class="sub">${it.sub}</span>` : "";
+  const icon = it.alert ? "!" : "✓";
+  return `<li class="it ${cls.join(" ")}" data-idx="${idx}">
+    <span class="box">${icon}</span>
+    <span class="t">${h}<b>${it.t}</b>${sub}</span>
+  </li>`;
+}
+
+function render(){
+  const dow = today.getDay();
+  const sections = routineFor(dow);
+
+  // En-tête date
+  document.getElementById("hd-day").textContent = frDate(today);
+
+  // Écran terminé ?
+  if(isClosed()){
+    app.style.display="none";
+    doneScreen.style.display="block";
+    const nd = new Date(today); nd.setDate(nd.getDate()+1);
+    document.getElementById("next-date").textContent = frDate(nd);
+    document.getElementById("done-msg").textContent = "Journée du "+frDate(today)+" archivée.";
+    return;
+  }
+  app.style.display="block";
+  doneScreen.style.display="none";
+
+  // Compter items réels (hors alertes? non, on compte tout sauf la clôture)
+  let total=0;
+  sections.forEach(s=> total += s.items.length);
+
+  // Construire le HTML
+  let html="";
+  let globalIdx=0;
+  sections.forEach(sec=>{
+    html += `<details class="sec" ${sec.open?"open":""}><summary>${sec.title}<span class="cnt" data-cnt></span><span class="chev">▶</span></summary><ul class="lst">`;
+    sec.items.forEach(it=>{
+      html += buildItemHTML(it, globalIdx++);
+    });
+    html += `</ul></details>`;
+  });
+
+  // Ligne de clôture (toujours en dernier, hors sections)
+  html += `<div class="close-row">
+    <ul class="lst"><li class="it" data-close="1">
+      <span class="box">✓</span>
+      <span class="t"><b>✅ Journée terminée — clôturer</b><span class="sub">Coche ici pour passer au jour suivant (même si tout n'est pas coché).</span></span>
+    </li></ul>
+    <div class="close-hint">Dernière action du jour. À utiliser quand tu consideres ta journée finie.</div>
+  </div>`;
+
+  app.innerHTML = html;
+
+  // Restaurer l'état coché + appliquer disparition
+  const done = loadDone();
+  document.querySelectorAll(".it").forEach(el=>{
+    const idx = el.dataset.idx;
+    const close = el.dataset.close;
+    const id = close ? "close" : idx;
+    if(done[id]){
+      el.classList.add("done");
+      // Les items déjà faits disparaissent au chargement
+      if(!close) el.classList.add("removing");
+    }
+  });
+
+  // Attacher les clics
+  document.querySelectorAll(".it").forEach(el=>{
+    el.addEventListener("click", ()=> onItemClick(el));
+  });
+
+  updateCounts();
+  updateProg(total);
+}
+
+function onItemClick(el){
+  if(el.classList.contains("removing")) return;
+  const idx = el.dataset.idx;
+  const close = el.dataset.close==="1";
+  const done = loadDone();
+
+  if(close){
+    // Clôture de journée
+    el.classList.add("done");
+    done["close"]=1; saveDone(done);
+    updateProg();
+    setTimeout(()=>{
+      setClosed();
+      render();
+      window.scrollTo({top:0,behavior:"smooth"});
+    }, 450);
+    return;
+  }
+
+  // Item normal : cocher puis faire disparaître
+  el.classList.add("done");
+  done[idx]=1; saveDone(done);
+  updateCounts();
+  setTimeout(()=>{ el.classList.add("removing"); }, 280);
+  updateProg();
+}
+
+function updateCounts(){
+  document.querySelectorAll(".sec").forEach(sec=>{
+    const items = sec.querySelectorAll(".it");
+    const remaining = sec.querySelectorAll(".it:not(.removing):not(.done)").length;
+    const cnt = sec.querySelector("[data-cnt]");
+    if(cnt) cnt.textContent = remaining ? remaining+" restant(s)" : "✓";
+    sec.classList.toggle("empty", remaining===0 && items.length>0 && sec.querySelectorAll(".it.removing").length===items.length);
+  });
+}
+
+function updateProg(total){
+  const all = document.querySelectorAll(".it:not([data-close])");
+  if(total===undefined) total=all.length;
+  const done = document.querySelectorAll(".it.done:not([data-close])");
+  const pct = total?Math.round(done.length/total*100):0;
+  document.getElementById("prog").textContent = done.length+"/"+total;
+  document.getElementById("bar").style.width = pct+"%";
+}
+
+function resetDay(){
+  if(!confirm("Réinitialiser la journée ? Les cochages du jour seront effacés.")) return;
+  try{ localStorage.removeItem("done-"+key); localStorage.removeItem("closed-"+key); }catch(e){}
+  render();
+}
+
+/* ============================================================
+   INSTALLATION PWA (beforeinstallprompt)
+   ============================================================ */
+let deferredPrompt=null;
+window.addEventListener("beforeinstallprompt", e=>{
+  e.preventDefault();
+  deferredPrompt=e;
+  document.getElementById("install-banner").style.display="block";
+});
+document.getElementById("btn-install").addEventListener("click", async ()=>{
+  if(!deferredPrompt) return;
+  deferredPrompt.prompt();
+  await deferredPrompt.userChoice;
+  deferredPrompt=null;
+  document.getElementById("install-banner").style.display="none";
+});
+
+/* ============================================================
+   SERVICE WORKER (offline)
+   ============================================================ */
+if("serviceWorker" in navigator){
+  window.addEventListener("load", ()=>{
+    navigator.serviceWorker.register("./sw.js").catch(()=>{});
+  });
+}
+
+/* Vérifier le changement de date (si l'app reste ouverte passé minuit) */
+setInterval(()=>{
+  const now = new Date(); now.setHours(0,0,0,0);
+  if(now.getTime() !== today.getTime()){
+    today = now; key = dateKey(today);
+    render();
+  }
+}, 60000);
+
+render();
+</script>
+</body>
+</html>
