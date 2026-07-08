@@ -23,18 +23,10 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// L'ID utilisateur — on reste simple : un identifiant partagé dans localStorage.
-// Comme c'est ton app perso, un ID fixe suffit. On le génère une fois.
-function getUserId(){
-  let uid = localStorage.getItem("memo-uid");
-  if(!uid){
-    uid = "gilles-" + Math.random().toString(36).slice(2,10);
-    localStorage.setItem("memo-uid", uid);
-  }
-  return uid;
-}
-
-const UID = getUserId();
+// L'ID utilisateur — FIXE et partagé entre tous tes appareils.
+// Comme c'est ton app perso, un ID fixe suffit : le PC et le téléphone
+// liront/écriront dans le MÊME document Firestore, donc ils se synchronisent.
+const UID = "memo-gilles-2026";
 
 /* Récupère l'état d'un jour depuis Firestore.
    Retourne {done:{}, closed:false} ou null si inexistant. */
@@ -43,11 +35,14 @@ async function loadRemote(dateKey){
     const ref = doc(db, "memo-sante", UID + "-" + dateKey);
     const snap = await getDoc(ref);
     if(snap.exists()){
-      return snap.data();
+      const data = snap.data();
+      console.log("[memo-sync] loadRemote OK:", dateKey, data);
+      return data;
     }
+    console.log("[memo-sync] loadRemote: aucun doc pour", dateKey);
     return null;
   }catch(e){
-    console.warn("loadRemote error:", e);
+    console.warn("[memo-sync] loadRemote error:", e);
     return null;
   }
 }
@@ -57,9 +52,10 @@ async function saveRemote(dateKey, state){
   try{
     const ref = doc(db, "memo-sante", UID + "-" + dateKey);
     await setDoc(ref, state);
+    console.log("[memo-sync] saveRemote OK:", dateKey, Object.keys(state.done||{}).length, "items");
     return true;
   }catch(e){
-    console.warn("saveRemote error:", e);
+    console.warn("[memo-sync] saveRemote error:", e);
     return false;
   }
 }
@@ -70,12 +66,14 @@ function listenRemote(dateKey, onChange){
   const ref = doc(db, "memo-sante", UID + "-" + dateKey);
   return onSnapshot(ref, (snap)=>{
     if(snap.exists()){
+      console.log("[memo-sync] onSnapshot update:", dateKey);
       onChange(snap.data());
     }
   }, (err)=>{
-    console.warn("listenRemote error:", err);
+    console.warn("[memo-sync] onSnapshot error:", err);
   });
 }
 
 // Exposer pour index.html (qui n'est pas un module)
-window.memoSync = { loadRemote, saveRemote, listenRemote };
+window.memoSync = { loadRemote, saveRemote, listenRemote, UID };
+console.log("[memo-sync] firebase.js chargé. UID =", UID);
