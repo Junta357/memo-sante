@@ -151,6 +151,7 @@
     <div>
       <h1>Mémo Santé</h1>
       <div class="day" id="hd-day">—</div>
+      <div id="sync-status" style="font-size:.66rem;color:var(--mut);margin-top:.05rem">⟳ Sync…</div>
     </div>
   </div>
   <div>
@@ -180,9 +181,11 @@
 </div>
 
 <script src="./routine.js"></script>
+<script type="module" src="./firebase.js"></script>
 <script>
 /* ============================================================
    LOGIQUE APP — charge les données depuis routine.js
+   Synchronisation Firebase (PC ↔ smartphone) via firebase.js
    ============================================================ */
 let today = new Date(); today.setHours(0,0,0,0);
 let key = today.toISOString().slice(0,10);
@@ -192,6 +195,79 @@ function loadDone(){ try{return JSON.parse(localStorage.getItem("done-"+key))||{
 function saveDone(s){ try{localStorage.setItem("done-"+key, JSON.stringify(s));}catch(e){} }
 function isClosed(){ return localStorage.getItem("closed-"+key)==="1"; }
 function setClosed(){ try{localStorage.setItem("closed-"+key,"1");}catch(e){} }
+
+/* --- Synchronisation Firebase ---
+   On utilise window.memoSync exposé par firebase.js (module).
+   Stratégie :
+   1. Affichage immédiat depuis le local (rapide)
+   2. Chargement remote → fusion (le remote gagne s'il a plus de cochages)
+   3. Écoute temps réel → mise à jour auto si l'autre appareil coche
+*/
+let syncOk = false;        // Firebase est-il chargé ?
+let unsubListener = null;  // Pour arrêter l'écoute en cours
+let isApplyingRemote = false; // Évite les boucles de sauvegarde
+
+function syncStatus(msg){
+  const el = document.getElementById("sync-status");
+  if(el) el.textContent = msg;
+}
+
+// Attendre que memoSync soit disponible (firebase.js est un module, chargé en async)
+function waitForSync(cb, attempts=0){
+  if(window.memoSync){ cb(); return; }
+  if(attempts > 50){ syncStatus("Sync off (hors-ligne)"); return; }
+  setTimeout(()=> waitForSync(cb, attempts+1), 100);
+}
+
+// Fusionner deux états : on garde l'union des cochages + closed si true
+function mergeState(localDone, remoteDone){
+  const merged = {...(remoteDone||{})};
+  for(const k in localDone){ if(localDone[k]) merged[k]=1; }
+  return merged;
+}
+
+async function initSync(){
+  if(!window.memoSync) return;
+  syncOk = true;
+  syncStatus("⟳ Sync…");
+
+  // 1. Charger l'état remote du jour
+  const remote = await window.memoSync.loadRemote(key);
+  if(remote){
+    // Fusionner : remote d'abord, puis local (union)
+    const localDone = loadDone();
+    const merged = mergeState(localDone, remote.done);
+    saveDone(merged);
+    if(remote.closed){ setClosed(); }
+    render();
+    syncStatus("✓ Sync");
+  }else{
+    // Pas d'état remote → pousser l'état local actuel
+    await pushState();
+    syncStatus("✓ Sync");
+  }
+
+  // 2. Écouter les changements en temps réel
+  if(unsubListener) unsubListener();
+  unsubListener = window.memoSync.listenRemote(key, (remote)=>{
+    if(isApplyingRemote) return;
+    isApplyingRemote = true;
+    const localDone = loadDone();
+    const merged = mergeState(localDone, remote.done);
+    saveDone(merged);
+    if(remote.closed){ setClosed(); }
+    render();
+    isApplyingRemote = false;
+    syncStatus("✓ Sync");
+  });
+}
+
+// Pousser l'état local vers Firestore
+async function pushState(){
+  if(!syncOk || !window.memoSync) return;
+  const state = { done: loadDone(), closed: isClosed(), date: key, ts: Date.now() };
+  await window.memoSync.saveRemote(key, state);
+}
 
 const app = document.getElementById("app");
 const doneScreen = document.getElementById("done-screen");
@@ -284,8 +360,9 @@ function onItemClick(el){
   if(close){
     el.classList.add("done");
     done["close"]=1; saveDone(done);
+    setClosed();
+    pushState();
     setTimeout(()=>{
-      setClosed();
       render();
       window.scrollTo({top:0,behavior:"smooth"});
     }, 450);
@@ -294,6 +371,7 @@ function onItemClick(el){
 
   el.classList.add("done");
   done[idx]=1; saveDone(done);
+  pushState();
   updateCounts();
   setTimeout(()=>{ el.classList.add("removing"); }, 280);
   updateProg();
@@ -322,6 +400,7 @@ function resetDay(){
   if(!confirm("Réinitialiser la journée ? Les cochages du jour seront effacés.")) return;
   try{ localStorage.removeItem("done-"+key); localStorage.removeItem("closed-"+key); }catch(e){}
   render();
+  pushState(); // propage la réinitialisation aux autres appareils
 }
 
 /* Force la mise à jour de l'app : déclenche le SW, prend le contrôle, recharge.
@@ -405,10 +484,12 @@ setInterval(()=>{
   if(now.getTime() !== today.getTime()){
     today = now; key = today.toISOString().slice(0,10);
     render();
+    initSync(); // réécouter le nouveau jour
   }
 }, 60000);
 
 render();
+waitForSync(initSync); // démarrer la synchro Firebase dès que dispo
 </script>
 </body>
 </html>
