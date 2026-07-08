@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#fdf6ec">
+<meta name="theme-color" content="#171311">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Mémo Santé">
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="./manifest.json">
@@ -14,23 +14,25 @@
 <title>Mémo Santé</title>
 <style>
   :root{
-    /* Palette douce & chaleureuse — fond crème, orange doux, tons discrets */
-    --bg:#fdf6ec;            /* crème */
-    --card:#ffffff;          /* cartes blanches */
-    --card2:#faf1e2;         /* crème plus chaud */
-    --txt:#3d342a;           /* brun foncé doux */
-    --mut:#8a7d6b;           /* brun gris */
-    --line:#ece0cb;          /* beige clair */
-    --acc:#e0915a;           /* orange chaleureux */
-    --acc2:#c97a3e;          /* orange plus profond */
-    --acc-soft:#f6e3cf;      /* halo orange doux */
-    --he:#6f9e7a;            /* vert sauge (HE) */
-    --he-bg:#eef5ee;         /* fond vert très doux */
-    --rec:#b88a4a;           /* bronze doux (recettes) */
-    --rec-bg:#f7efe0;        /* fond bronze doux */
-    --alert:#b07a52;         /* terracotta adouci (au lieu du rouge) */
-    --alert-bg:#f7ece2;      /* fond terracotta doux */
-    --warn:#c97a3e;          /* pour échéances sensibles */
+    /* Sombre chaleureux & tamisé — comme un soir à la bougie.
+       Tons brun/charcoal chauds (pas de noir froid ni de bleu),
+       reposant pour les yeux, cohérent avec la palette orange douce. */
+    --bg:#171311;            /* brun-charcoal très sombre, chaud */
+    --card:#221c18;          /* carte légèrement plus claire, chaude */
+    --card2:#2b231d;         /* crème chaud renversé (halos) */
+    --txt:#ece3d8;           /* off-white chaud (pas de blanc pur) */
+    --mut:#9a8d7b;           /* brun gris doux */
+    --line:#332b24;          /* beige chaud sombre */
+    --acc:#e8a06a;           /* orange chaleureux, lisible sur sombre */
+    --acc2:#f0b07a;          /* orange clair (titres, heures) */
+    --acc-soft:#3a2a1d;      /* halo orange sombre */
+    --he:#7fb087;            /* vert sauge lumineux sur sombre */
+    --he-bg:#1e2a20;         /* fond vert sombre très doux */
+    --rec:#d4a96e;           /* bronze lumineux (recettes) */
+    --rec-bg:#2a2318;        /* fond bronze sombre */
+    --alert:#d49a72;         /* terracotta doux (pas de rouge) */
+    --alert-bg:#2d1f18;      /* fond terracotta sombre */
+    --warn:#e8a06a;          /* échéances sensibles */
     --safe:env(safe-area-inset-top,0px);
   }
   *{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
