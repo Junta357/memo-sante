@@ -1,0 +1,20 @@
+{
+  "name": "Mémo Santé — Vieillir en santé",
+  "short_name": "Mémo Santé",
+  "description": "Routine quotidienne santé & longévité. Coche, la ligne disparaît, clôture ta journée.",
+  "lang": "fr",
+  "dir": "ltr",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "portrait",
+  "background_color": "#0f1a16",
+  "theme_color": "#0f1a16",
+  "categories": ["health", "lifestyle", "productivity"],
+  "icons": [
+    {"src":"./icons/icon-192.png","sizes":"192x192","type":"image/png","purpose":"any"},
+    {"src":"./icons/icon-512.png","sizes":"512x512","type":"image/png","purpose":"any"},
+    {"src":"./icons/icon-512-maskable.png","sizes":"512x512","type":"image/png","purpose":"maskable"}
+  ]
+}
