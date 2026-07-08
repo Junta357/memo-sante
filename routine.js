@@ -30,6 +30,7 @@ function routinePour(dow) {
   if (sardines)     dayItems.push({ h:"", t:"🐟 Sardines", sub:"1 boîte au souper", today:true });
   if (bainRecup)    dayItems.push({ h:"", t:"🛁 Bain récupération", sub:"ce soir — Gingembre/Pin/Épinette + sel Epsom", today:true });
   if (yogaYin)      dayItems.push({ h:"", t:"🧘 Yoga Yin 30 min", sub:"ce soir", today:true });
+  if (weekend)      dayItems.push({ h:"", type:"lien", t:"🤝 Contact humain aujourd'hui", sub:"Visite, appel, main sur l'épaule, câlin court. Co-régulation émotionnelle + ocytocine. Levier longévité (module OMS n°5 — lien social)." });
   sections.push({ titre:"📌 Aujourd'hui", open:true, items:dayItems });
 
   /* ====== MATIN ====== */
@@ -102,6 +103,8 @@ function routinePour(dow) {
     // Acupression — nourrir le Dantian
     { h:"21h30", type:"acu", t:"🤚 CV4 (main posée)", sub:"3 doigts sous le nombril, main posée + respiration basse. Nourrit le Dantian inférieur, recharge le réservoir." },
     { h:"22h15", type:"he", t:"🌿 Massage coucher", sub:"Camomille noble 2 + Lavande 1 gt / 1 c.c. amande — épaules, cou, plexus. Camomille = ton n°1 sommeil.", today:true },
+    // Toucher — câlin chat (présence corporelle apaisante)
+    { h:"22h15", type:"lien", t:"🐱 Un moment avec ton chat", sub:"Quelques minutes de contact — ocytocine bilatérale (toi + chat), baisse du cortisol. Levier de longévité (module OMS n°5)." },
     // Acupression — induction du sommeil
     { h:"22h15", type:"acu", t:"🤚 HT7 + Yin Tang + KD1", sub:"Au lit : HT7 (1 min/main, pli externe du poignet) + Yin Tang (30 s, entre les sourcils) + KD1 (1 min/pied, plante). Induit le sommeil." },
     { h:"22h25", type:"he", t:"🌿 Spray oreiller", sub:"Camomille 8 + Lavande 6 + Néroli 3 gt / 30 ml eau — 2-3 pschitts (loin des yeux)", today:true },
