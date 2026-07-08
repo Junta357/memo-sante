@@ -4,7 +4,7 @@
      manifest) → les mises à jour sont vues dès la prochaine ouverture.
    - cache-first pour les icônes (changent rarement, économise du réseau).
    - Fallback offline : si le réseau échoue, on sert le cache. */
-const CACHE = "memo-sante-v13";
+const CACHE = "memo-sante-v14";
 const PRINCIPAUX = ["./","./index.html","./routine.js","./manifest.json","./sw.js","./firebase.js"];
 const ASSETS = [
   ...PRINCIPAUX,
