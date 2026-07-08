@@ -19,43 +19,45 @@ function routinePour(dow) {
   const bainRecup = dow===4;                   // jeu (récupération sport)
   const weekend = dow===0 || dow===6;
 
-  // --- Sections de la journée ---
-  // type d'item : "normal" (défaut), "he" (huile essentielle), "alerte", "recette"
   const sections = [];
 
-  /* ====== MATIN ====== */
-  sections.push({
-    titre: "🌅 Matin",
-    open: true,
-    items: [
-      { h:"06h30", t:"Réveil", sub:"simulateur d'aube" },
-      { h:"06h35", t:"👁️ Yoga des yeux", sub:"5 clignements conscients + 1 palming (1 min)", today:true },
-      { h:"06h40", t:"💪 Stomach vacuum", sub:"2 min, 2–3 reps, cou relâché" },
-      { h:"06h45", t:"☕ Café 1", sub:"noir bio" },
-      // HE — Diffusion tonique au lever
-      { h:"06h50", type:"he", t:"🌿 Diffusion tonique", sub:"Romarin 2 + Pin 2 + Menthe poivrée 1 — 10 min, pièce de vie. 🐱 Chat en bas → fenêtre ouverte.", today:true },
-      { h:"07h00", t: weekend ? "🚶 Repos actif" : "🏃 Course 5–7,5 km",
-        sub: weekend ? "marche, vélo, stretching (pas de course)" : "ou repos actif si > 25 °C ressenti à 7h",
-        today: !weekend },
-    ]
-  });
+  /* ====== AUJOURD'HUI (contexte immédiat, en premier) ====== */
+  const dayItems = [];
+  if (weekend)      dayItems.push({ h:"", t:"🚶 Repos actif", sub:"marche, vélo, stretching — pas de course", today:true });
+  else              dayItems.push({ h:"", t:"🏃 Jour de course", sub:"5–7,5 km · privilégie le Jus B au repas 1 + friction post-course", today:true });
+  if (rhodiola)     dayItems.push({ h:"", t:"💊 Rhodiola aujourd'hui", sub:"7h30 à jeun · pas de Tyrosine aujourd'hui", today:true });
+  if (tyrosine)     dayItems.push({ h:"", t:"💊 Tyrosine aujourd'hui", sub:"8h30 · pas de Rhodiola aujourd'hui", today:true });
+  if (sardines)     dayItems.push({ h:"", t:"🐟 Sardines", sub:"1 boîte au souper", today:true });
+  if (bainRecup)    dayItems.push({ h:"", t:"🛁 Bain récupération", sub:"ce soir — Gingembre/Pin/Épinette + sel Epsom", today:true });
+  if (yogaYin)      dayItems.push({ h:"", t:"🧘 Yoga Yin 30 min", sub:"ce soir", today:true });
+  sections.push({ titre:"📌 Aujourd'hui", open:true, items:dayItems });
 
-  // HE friction post-course — seulement les jours de course
-  const matinSuite = [];
+  /* ====== MATIN ====== */
+  const matin = [
+    { h:"06h30", t:"Réveil", sub:"simulateur d'aube" },
+    { h:"06h35", t:"👁️ Yoga des yeux", sub:"5 clignements conscients + 1 palming (1 min)", today:true },
+    { h:"06h40", t:"💪 Stomach vacuum", sub:"2 min, 2–3 reps, cou relâché" },
+    { h:"06h45", t:"☕ Café 1", sub:"noir bio" },
+    // HE — Diffusion tonique au lever
+    { h:"06h50", type:"he", t:"🌿 Diffusion tonique", sub:"Romarin 2 + Pin 2 + Menthe poivrée 1 — 10 min, pièce de vie. 🐱 Chat en bas → fenêtre ouverte.", today:true },
+    { h:"07h00", t: weekend ? "🚶 Repos actif" : "🏃 Course 5–7,5 km",
+      sub: weekend ? "marche, vélo, stretching (pas de course)" : "ou repos actif si > 25 °C ressenti à 7h",
+      today: !weekend },
+  ];
   if (rhodiola) {
-    matinSuite.push({ h:"07h30", t:"💊 Rhodiola (à jeun)", sub:"pas de Tyrosine aujourd'hui", today:true });
+    matin.push({ h:"07h30", t:"💊 Rhodiola (à jeun)", sub:"pas de Tyrosine aujourd'hui", today:true });
   }
   if (jourCourse) {
-    matinSuite.push({ h:"08h05", type:"he", t:"🌿 Friction post-course", sub:"Laurier 4 + Gingembre 3 + Pin 2 + Immortelle 2 / 1 c.c. amande — adducteurs + cuisses. Immortelle : 1-2 gt suffisent.", today:true });
+    matin.push({ h:"08h05", type:"he", t:"🌿 Friction post-course", sub:"Laurier 4 + Gingembre 3 + Pin 2 + Immortelle 2 / 1 c.c. amande — adducteurs + cuisses. Immortelle : 1-2 gt suffisent.", today:true });
   }
-  matinSuite.push({
+  matin.push({
     h:"08h30",
     t: tyrosine ? "💊 Tyrosine + encas" : "🍊 Encas post-course",
     sub: tyrosine ? "1 orange bio + fromage d'abbaye (pas de Rhodiola aujourd'hui)" : "1 orange bio + morceau fromage d'abbaye",
     today: tyrosine
   });
-  matinSuite.push({ h:"08h45", t:"🍵 Thé vert", sub:"1 tasse" });
-  sections[0].items.push(...matinSuite);
+  matin.push({ h:"08h45", t:"🍵 Thé vert", sub:"1 tasse" });
+  sections.push({ titre:"🌅 Matin", open:true, items:matin });
 
   /* ====== JOURNÉE ====== */
   sections.push({
@@ -76,7 +78,6 @@ function routinePour(dow) {
   const soirItems = [
     { h:"18h00", t:"🍲 Souper", sub:"protéines + légumes cuits + glucides + Omega-3 + Mg + Ashwagandha" },
     { h:"18h10", t:"🚶 Marche post-prandiale", sub:"10 min (si temp. OK)" },
-    // HE bain récup — jeudi seulement
   ];
   if (bainRecup) {
     soirItems.push({ h:"20h30", type:"he", t:"🛁 Bain récupération sport",
@@ -84,13 +85,10 @@ function routinePour(dow) {
   }
   soirItems.push(
     { h:"21h00", t:"🧘 Étirements adducteurs", sub:"papillon + fente latérale + stomach vacuum · 2–3 min" },
-    { h:"21h15", t:"👁️ Yoga des yeux", sub:"exercice de l'index + palming (anti-presbytie + nerf vague)" },
-    // HE diffusion soirée
     { h:"21h00", type:"he", t:"🌿 Diffusion soirée", sub:"Orange douce 2 + Lavande 2 + Cèdre 1 — pièce. 🐱 Chat → fenêtre ouverte.", today:true },
+    { h:"21h15", t:"👁️ Yoga des yeux", sub:"exercice de l'index + palming (anti-presbytie + nerf vague)" },
     { h:"21h30", t:"🫖 Tisane", sub:"fenouil/gingembre/cannelle si besoin" },
-    // HE massage coucher
     { h:"22h15", type:"he", t:"🌿 Massage coucher", sub:"Camomille noble 2 + Lavande 1 gt / 1 c.c. amande — épaules, cou, plexus. Camomille = ton n°1 sommeil.", today:true },
-    // HE spray oreiller
     { h:"22h25", type:"he", t:"🌿 Spray oreiller", sub:"Camomille 8 + Lavande 6 + Néroli 3 gt / 30 ml eau — 2-3 pschitts (loin des yeux)", today:true },
     { h:"22h30", t:"🌙 Début jeûne nocturne", sub:"~14 h jusqu'à 8h30" },
   );
@@ -119,32 +117,23 @@ function routinePour(dow) {
     ]
   });
 
-  /* ====== SPÉCIFIQUE AU JOUR ====== */
-  const dayItems = [];
-  if (jourCourse) dayItems.push({ h:"", t:"🏃 Jour de course", sub:"privilégie le Jus B au repas 1 + friction post-course", today:true });
-  if (sardines) dayItems.push({ h:"", t:"🐟 Sardines", sub:"1 boîte au souper", today:true });
-  if (bainRecup) dayItems.push({ h:"", t:"🛁 Bain récupération", sub:"ce soir — Gingembre/Pin/Épinette + sel Epsom", today:true });
-  if (yogaYin) dayItems.push({ h:"", t:"🧘 Yoga Yin 30 min", sub:"ce soir", today:true });
-  if (weekend) dayItems.push({ h:"", t:"🚶 Repos actif", sub:"marche, vélo, stretching", today:true });
-  if (dayItems.length) sections.push({ titre:"📅 Spécifique au jour", open:true, items:dayItems });
-
-  /* ====== ALERTES SÉCURITÉ ====== */
+  /* ====== SÉCURITÉ (alertes adoucies) ====== */
   sections.push({
-    titre: "🚨 Alertes non négociables",
+    titre: "🛡️ Points de vigilance",
     open: false,
     items: [
-      { h:"", type:"alerte", t:"🦵 Genou droit = signe neuro", sub:"Avis médical à programmer. Fourmillements / perte de sensation → CONSULTER immédiatement. L'HE (Immortelle+Laurier) accompagne, ne traite pas." },
-      { h:"", type:"alerte", t:"🌞 Grains de beauté bras gauche", sub:"Dermato annuel. JAMAIS d'agrume (citron, bergamote, orange) sur le bras gauche avant soleil. Photosensibilité 12h." },
-      { h:"", type:"alerte", t:"🫘 Rein sensible", sub:"PAS d'ingestion d'HE. Hydratation forte. Menthe proscrite en ingestion." },
+      { h:"", type:"alerte", t:"🦵 Genou droit — signe neuro", sub:"Avis médical à programmer. Fourmillements / perte de sensation → consulter. L'HE (Immortelle+Laurier) accompagne, ne traite pas." },
+      { h:"", type:"alerte", t:"🌞 Grains de beauté — bras gauche", sub:"Dermato annuel. Pas d'agrume (citron, bergamote, orange) sur le bras gauche avant soleil. Photosensibilité 12h." },
+      { h:"", type:"alerte", t:"🫘 Rein sensible", sub:"Pas d'ingestion d'HE. Hydratation forte. Menthe proscrite en ingestion." },
       { h:"", type:"alerte", t:"🐱 Chat", sub:"Diffusion en bas → fenêtre ouverte. Jamais d'HE appliquée sur le chat." },
       { h:"", type:"alerte", t:"🌡️ Météo > 25 °C à 7h", sub:"pas de course → fractionné ou repos" },
       { h:"", type:"alerte", t:"🦵 Adducteur > 3/10 ou boiterie", sub:"réduire / marcher, étirements obligatoires" },
-      { h:"", type:"alerte", t:"😰 Anxiété, palpitations, insomnie", sub:"réduire caféine et/ou Tyrosine/Rhodiola" },
-      { h:"", type:"alerte", t:"💨 Transit trop rapide", sub:"réduire magnésium" },
+      { h:"", type:"alerte", t:"💧 Transit trop rapide", sub:"réduire magnésium" },
+      { h:"", type:"alerte", t:"☕ Anxiété, palpitations, insomnie", sub:"réduire caféine et/ou Tyrosine/Rhodiola" },
     ]
   });
 
-  /* ====== RECETTES HE (référence rapide) ====== */
+  /* ====== RECETTES HE (référence) ====== */
   sections.push({
     titre: "🌿 Recettes HE (référence)",
     open: false,
