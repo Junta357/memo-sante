@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#0f1a16">
+<meta name="theme-color" content="#fdf6ec">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Mémo Santé">
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="./manifest.json">
@@ -14,101 +14,117 @@
 <title>Mémo Santé</title>
 <style>
   :root{
-    --bg:#0f1a16; --card:#16241e; --card2:#1d2f27; --txt:#e8efe9; --mut:#8aa093;
-    --acc:#4ec38a; --acc2:#f0b35e; --warn:#e06b5a; --line:#28403a; --done:#3a4a42;
-    --he:#7bc4a0; --he-bg:#1a2e26; --rec:#c9a96e; --rec-bg:#241f17;
+    /* Palette douce & chaleureuse — fond crème, orange doux, tons discrets */
+    --bg:#fdf6ec;            /* crème */
+    --card:#ffffff;          /* cartes blanches */
+    --card2:#faf1e2;         /* crème plus chaud */
+    --txt:#3d342a;           /* brun foncé doux */
+    --mut:#8a7d6b;           /* brun gris */
+    --line:#ece0cb;          /* beige clair */
+    --acc:#e0915a;           /* orange chaleureux */
+    --acc2:#c97a3e;          /* orange plus profond */
+    --acc-soft:#f6e3cf;      /* halo orange doux */
+    --he:#6f9e7a;            /* vert sauge (HE) */
+    --he-bg:#eef5ee;         /* fond vert très doux */
+    --rec:#b88a4a;           /* bronze doux (recettes) */
+    --rec-bg:#f7efe0;        /* fond bronze doux */
+    --alert:#b07a52;         /* terracotta adouci (au lieu du rouge) */
+    --alert-bg:#f7ece2;      /* fond terracotta doux */
+    --warn:#c97a3e;          /* pour échéances sensibles */
     --safe:env(safe-area-inset-top,0px);
   }
   *{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
   html,body{margin:0; padding:0; background:var(--bg); overscroll-behavior-y:none}
   body{font-family:-apple-system,"Segoe UI",Roboto,system-ui,sans-serif; color:var(--txt);
-    font-size:16px; line-height:1.45; padding:calc(.6rem + var(--safe)) .75rem 6rem;
+    font-size:16px; line-height:1.5; padding:calc(.6rem + var(--safe)) .75rem 6rem;
     max-width:640px; margin-inline:auto; -webkit-font-smoothing:antialiased}
 
+  /* Bandeau supérieur */
   header{position:sticky; top:0; z-index:10; background:var(--bg); margin:0 -.75rem;
     padding:.6rem .9rem calc(.6rem + var(--safe)); border-bottom:1px solid var(--line);
     display:flex; align-items:center; justify-content:space-between; gap:.6rem}
-  header .ttl{display:flex; align-items:center; gap:.5rem}
-  header .logo{width:30px; height:30px; border-radius:8px; object-fit:cover}
-  header h1{font-size:1.02rem; margin:0; font-weight:800; letter-spacing:.01em}
+  header .ttl{display:flex; align-items:center; gap:.55rem}
+  header .logo{width:32px; height:32px; border-radius:9px; object-fit:cover}
+  header h1{font-size:1.04rem; margin:0; font-weight:800; letter-spacing:.01em; color:var(--acc2)}
   header .day{font-size:.76rem; color:var(--mut); margin-top:.05rem; text-transform:capitalize}
   #prog{font-size:.72rem; color:var(--mut); text-align:right; min-width:4.5rem; font-variant-numeric:tabular-nums}
   .bar{height:6px; background:var(--card2); border-radius:4px; overflow:hidden; margin-top:.3rem; width:5rem}
   .bar i{display:block; height:100%; width:0; background:linear-gradient(90deg,var(--acc),var(--acc2)); transition:width .3s}
 
-  .sec{margin:.7rem 0 0; background:var(--card); border:1px solid var(--line); border-radius:14px; overflow:hidden}
-  .sec>summary{list-style:none; cursor:pointer; padding:.8rem 1rem; display:flex; align-items:center; gap:.55rem;
-    font-weight:700; font-size:.92rem}
+  /* Sections */
+  .sec{margin:.7rem 0 0; background:var(--card); border:1px solid var(--line); border-radius:14px; overflow:hidden;
+    box-shadow:0 1px 3px rgba(180,140,80,.06)}
+  .sec>summary{list-style:none; cursor:pointer; padding:.85rem 1rem; display:flex; align-items:center; gap:.55rem;
+    font-weight:700; font-size:.93rem; color:var(--txt)}
   .sec>summary::-webkit-details-marker{display:none}
-  .sec>summary .chev{margin-left:auto; transition:transform .2s; color:var(--mut); font-size:.75rem}
+  .sec>summary .chev{margin-left:auto; transition:transform .2s; color:var(--mut); font-size:.7rem}
   .sec[open]>summary .chev{transform:rotate(90deg)}
   .sec[open]>summary{border-bottom:1px solid var(--line)}
-  .sec .cnt{font-size:.72rem; color:var(--mut); font-weight:600; margin-left:auto; margin-right:.5rem}
+  .sec .cnt{font-size:.7rem; color:var(--mut); font-weight:600; margin-left:auto; margin-right:.5rem}
   .sec.empty{display:none}
 
+  /* Items */
   ul.lst{list-style:none; margin:0; padding:0}
-  .it{display:flex; align-items:flex-start; gap:.7rem; padding:.78rem 1rem; border-top:1px solid var(--line);
+  .it{display:flex; align-items:flex-start; gap:.7rem; padding:.8rem 1rem; border-top:1px solid var(--line);
     cursor:pointer; min-height:54px; transition:opacity .25s, transform .25s, max-height .3s, padding .3s, margin .3s, background .2s;
-    overflow:hidden; max-height:140px}
+    overflow:hidden; max-height:150px}
   .it:first-child{border-top:none}
   .it .t{flex:1; font-size:.91rem; padding-top:.05rem}
   .it .t b{font-weight:700}
-  .it .t .sub{display:block; color:var(--mut); font-size:.76rem; margin-top:.12rem}
-  .it .h{display:inline-block; min-width:2.5rem; font-variant-numeric:tabular-nums; color:var(--acc);
-    font-weight:700; font-size:.8rem; margin-right:.3rem}
+  .it .t .sub{display:block; color:var(--mut); font-size:.77rem; margin-top:.14rem}
+  .it .h{display:inline-block; min-width:2.5rem; font-variant-numeric:tabular-nums; color:var(--acc2);
+    font-weight:700; font-size:.8rem; margin-right:.35rem}
   .box{flex:0 0 auto; width:30px; height:30px; border:2px solid var(--line); border-radius:9px;
-    display:grid; place-items:center; font-size:1rem; color:transparent; transition:.15s; margin-top:.02rem}
-  .it.done .box{background:var(--acc); border-color:var(--acc); color:#0f1a16}
-  .it.today .box{border-color:var(--acc2)}
+    display:grid; place-items:center; font-size:1rem; color:transparent; transition:.15s; margin-top:.02rem; background:var(--card)}
+  .it.done .box{background:var(--acc); border-color:var(--acc); color:#fff}
+  .it.today .box{border-color:var(--acc); background:var(--acc-soft)}
   .it.removing{opacity:0; transform:translateX(20px); max-height:0; padding-top:0; padding-bottom:0; margin:0; border-top-color:transparent}
 
-  /* Types d'items */
+  /* Types : HE (sauge), alerte (terracotta), recette (bronze) */
   .it.he{background:var(--he-bg)}
   .it.he .box{border-color:var(--he)}
   .it.he .h{color:var(--he)}
-  .it.he.done .box{background:var(--he); border-color:var(--he)}
+  .it.he.done .box{background:var(--he); border-color:var(--he); color:#fff}
   .it.he .t b{color:var(--he)}
 
-  .it.alerte{background:#2a1715}
-  .it.alerte .box{border-color:var(--warn)}
-  .it.alerte .t b{color:var(--warn)}
-  .it.alerte .box::after{content:"!"; color:var(--warn); font-weight:900}
+  .it.alerte{background:var(--alert-bg)}
+  .it.alerte .box{border-color:var(--alert); background:var(--alert-bg)}
+  .it.alerte .t b{color:var(--alert)}
+  .it.alerte .box::after{content:"•"; color:var(--alert); font-weight:900; font-size:1.3rem}
+  .it.alerte.done .box{background:var(--alert); border-color:var(--alert)}
+  .it.alerte.done .box::after{color:#fff}
 
   .it.recette{background:var(--rec-bg)}
-  .it.recette .box{border-color:var(--rec)}
+  .it.recette .box{border-color:var(--rec); background:var(--rec-bg)}
   .it.recette .t b{color:var(--rec)}
-  .it.recette .box::after{content:"℞"; color:var(--rec); font-size:.8rem}
-
-  .pill{display:inline-block; font-size:.66rem; background:var(--card2); color:var(--acc2);
-    padding:.1rem .4rem; border-radius:5px; margin-left:.2rem; vertical-align:middle; border:1px solid var(--line)}
-
-  .note{padding:.65rem 1rem; font-size:.78rem; color:var(--mut); border-top:1px solid var(--line)}
-  .note b{color:var(--txt)}
-  .warn{color:var(--warn); font-weight:700}
+  .it.recette .box::after{content:"✎"; color:var(--rec); font-size:.85rem}
+  .it.recette.done .box{background:var(--rec); border-color:var(--rec); color:#fff}
+  .it.recette.done .box::after{color:#fff}
 
   /* Ligne de clôture */
-  .close-row{margin:.9rem .9rem 0; background:linear-gradient(135deg,#1d2f27,#243a30);
+  .close-row{margin:.9rem .9rem 0; background:linear-gradient(135deg,var(--acc-soft),var(--card2));
     border:1px solid var(--acc); border-radius:14px; overflow:hidden}
   .close-row .it{border-top:none}
   .close-row .it .box{border-color:var(--acc)}
-  .close-row .it.done .box{background:var(--acc)}
+  .close-row .it.done .box{background:var(--acc); border-color:var(--acc); color:#fff}
   .close-hint{padding:.55rem 1rem .7rem; font-size:.74rem; color:var(--mut); text-align:center}
 
   /* Écran journée terminée */
   #done-screen{display:none; text-align:center; padding:3rem 1.5rem}
   #done-screen .big{font-size:3.4rem; margin-bottom:.5rem}
-  #done-screen h2{font-size:1.3rem; margin:.3rem 0; color:var(--acc)}
+  #done-screen h2{font-size:1.3rem; margin:.3rem 0; color:var(--acc2)}
   #done-screen p{color:var(--mut); font-size:.9rem; margin:.4rem 0}
-  #done-screen .next{margin-top:1.5rem; padding:1rem; background:var(--card); border:1px solid var(--line);
+  #done-screen .next{margin-top:1.5rem; padding:1rem 1.2rem; background:var(--card); border:1px solid var(--line);
     border-radius:12px; display:inline-block}
   #done-screen .next b{color:var(--acc2)}
 
   /* Échéances */
-  .echeance{display:flex; gap:.6rem; padding:.6rem 1rem; border-top:1px solid var(--line); font-size:.8rem}
+  .echeance{display:flex; gap:.6rem; padding:.65rem 1rem; border-top:1px solid var(--line); font-size:.8rem}
   .echeance:first-child{border-top:none}
   .echeance .d{color:var(--acc2); font-weight:700; min-width:5rem; font-size:.74rem}
   .echeance.warn .d{color:var(--warn)}
 
+  /* Barre bas */
   .bot{position:fixed; bottom:0; left:0; right:0; background:var(--bg); border-top:1px solid var(--line);
     padding:.55rem 1rem calc(.55rem + env(safe-area-inset-bottom,0px)); display:flex; gap:.6rem;
     max-width:640px; margin-inline:auto}
@@ -116,10 +132,11 @@
     color:var(--txt); font-size:.84rem; font-weight:700; cursor:pointer}
   .bot button:active{background:var(--card2)}
 
-  .install-banner{display:none; margin:.7rem 0 0; padding:.8rem 1rem; background:var(--card2);
+  /* Bannière install */
+  .install-banner{display:none; margin:.7rem 0 0; padding:.8rem 1rem; background:var(--acc-soft);
     border:1px solid var(--acc); border-radius:12px; font-size:.82rem}
-  .install-banner b{color:var(--acc)}
-  .install-banner button{margin-top:.5rem; padding:.55rem .9rem; background:var(--acc); color:#0f1a16;
+  .install-banner b{color:var(--acc2)}
+  .install-banner button{margin-top:.5rem; padding:.55rem .9rem; background:var(--acc); color:#fff;
     border:none; border-radius:8px; font-weight:700; font-size:.82rem; cursor:pointer; width:100%}
 </style>
 </head>
@@ -177,7 +194,7 @@ const doneScreen = document.getElementById("done-screen");
 
 function buildItemHTML(it, idx){
   const cls = ["it"];
-  if(it.type) cls.push(it.type);     // he, alerte, recette
+  if(it.type) cls.push(it.type);
   if(it.today) cls.push("today");
   const h = it.h ? `<span class="h">${it.h}</span>` : "";
   const sub = it.sub ? `<span class="sub">${it.sub}</span>` : "";
@@ -217,7 +234,7 @@ function render(){
 
   // Échéances
   if(typeof ECHEANCES !== "undefined" && ECHEANCES.length){
-    html += `<details class="sec"><summary>⚡ Échéances<span class="chev">▶</span></summary>`;
+    html += `<details class="sec"><summary>📅 Échéances<span class="chev">▶</span></summary>`;
     ECHEANCES.forEach(e=>{
       html += `<div class="echeance ${e.warn?"warn":""}"><span class="d">${e.date}</span><span>${e.t}</span></div>`;
     });
