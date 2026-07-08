@@ -1,10 +1,12 @@
 /* Service Worker — Mémo Santé (offline-first)
    Cache les fichiers de l'app pour fonctionnement hors-ligne total. */
-const CACHE = "memo-sante-v1";
+const CACHE = "memo-sante-v2";
 const ASSETS = [
   "./",
   "./index.html",
+  "./routine.js",
   "./manifest.json",
+  "./sw.js",
   "./icons/icon-192.png",
   "./icons/icon-512.png",
   "./icons/icon-512-maskable.png",
