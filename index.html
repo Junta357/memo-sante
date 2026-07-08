@@ -336,10 +336,29 @@ document.getElementById("btn-install").addEventListener("click", async ()=>{
   document.getElementById("install-banner").style.display="none";
 });
 
-/* Service Worker */
+/* Service Worker + mise à jour automatique */
 if("serviceWorker" in navigator){
   window.addEventListener("load", ()=>{
-    navigator.serviceWorker.register("./sw.js").catch(()=>{});
+    navigator.serviceWorker.register("./sw.js").then(reg=>{
+      // Détecter une nouvelle version du SW et forcer son activation
+      reg.addEventListener("updatefound", ()=>{
+        const nw = reg.installing;
+        if(!nw) return;
+        nw.addEventListener("statechange", ()=>{
+          if(nw.state==="installed" && navigator.serviceWorker.controller){
+            // Nouvelle version prête → prendre le contrôle tout de suite
+            nw.postMessage("SKIP_WAITING");
+          }
+        });
+      });
+    }).catch(()=>{});
+    // Quand le nouveau SW prend le contrôle, recharger une fois
+    let refreshing=false;
+    navigator.serviceWorker.addEventListener("controllerchange", ()=>{
+      if(refreshing) return;
+      refreshing=true;
+      window.location.reload();
+    });
   });
 }
 
