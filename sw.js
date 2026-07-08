@@ -1,6 +1,6 @@
 /* Service Worker — Mémo Santé (offline-first)
    Cache les fichiers de l'app pour fonctionnement hors-ligne total. */
-const CACHE = "memo-sante-v3";
+const CACHE = "memo-sante-v4";
 const ASSETS = [
   "./",
   "./index.html",
