@@ -188,7 +188,14 @@
    Synchronisation Firebase (PC ↔ smartphone) via firebase.js
    ============================================================ */
 let today = new Date(); today.setHours(0,0,0,0);
-let key = today.toISOString().slice(0,10);
+// Clé de date en LOCAL (pas UTC) pour éviter le décalage de fuseau horaire
+function localDateKey(d){
+  const y=d.getFullYear();
+  const m=String(d.getMonth()+1).padStart(2,"0");
+  const j=String(d.getDate()).padStart(2,"0");
+  return `${y}-${m}-${j}`;
+}
+let key = localDateKey(today);
 
 function frDate(d){ return d.toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"}); }
 function loadDone(){ try{return JSON.parse(localStorage.getItem("done-"+key))||{};}catch(e){return{}} }
@@ -482,7 +489,7 @@ if("serviceWorker" in navigator){
 setInterval(()=>{
   const now = new Date(); now.setHours(0,0,0,0);
   if(now.getTime() !== today.getTime()){
-    today = now; key = today.toISOString().slice(0,10);
+    today = now; key = localDateKey(today);
     render();
     initSync(); // réécouter le nouveau jour
   }
