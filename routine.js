@@ -57,7 +57,7 @@ function routinePour(dow) {
   /* ====== AUJOURD'HUI (contexte immédiat, en premier) ====== */
   const dayItems = [];
   // Croyance du jour (rotation 17 croyances) — en tête
-  dayItems.push({ h:"", type:"croy", t:"✦ Croyance du jour", sub:croyanceDuJour() + " — un rappel à laisser résonner aujourd'hui. (Trilogie Liberté)" });
+  dayItems.push({ h:"", type:"croy", t:"✦ Croyance du jour", sub:croyanceDuJour() + " — un rappel à laisser résonner aujourd'hui. (Développement personnel)" });
   if (weekend)      dayItems.push({ h:"", t:"🚶 Repos actif", sub:"marche, vélo, stretching — pas de course", today:true });
   else              dayItems.push({ h:"", t:"🏃 Jour de course", sub:"5–7,5 km · privilégie le Jus B au repas 1 + friction post-course", today:true });
   if (rhodiola)     dayItems.push({ h:"", t:"💊 Rhodiola aujourd'hui", sub:"7h30 à jeun · pas de Tyrosine aujourd'hui", today:true });
