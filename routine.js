@@ -104,7 +104,7 @@ function routinePour(dow) {
   /* ====== MATIN ====== */
   const matin = [
     { h:"06h30", t:"Réveil", sub:"simulateur d'aube" },
-    { h:"06h35", t:"👁️ Yoga des yeux", sub:"5 clignements conscients + 1 palming (1 min)", today:true },
+    { h:"06h35", t:"👁️ Yoga des yeux", sub:"5 clignements conscients (hydrate la cornée, réveille les yeux). ⚠️ Pas de palming le matin : il active le parasympathique (endort) — geste du soir uniquement.", today:true },
     // Acupression — réveil (araignée crânienne, remplace Du20 manuel + GI4)
     { h:"06h35", type:"acu", t:"🕷️ Araignée crânienne", sub:"Réveil du sommet du crâne (30 s–1 min) : circulation + clarté + détente. Plus agréable que Du20 manuel. (Remplace GI4+Du20 depuis le 10/07/2026.)", today:true },
     { h:"06h40", t:"💪 Stomach vacuum", sub:"2 min, 2–3 reps, cou relâché" },
