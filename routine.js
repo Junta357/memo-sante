@@ -69,9 +69,7 @@ function routinePour(dow) {
   // --- Conditions du jour ---
   const rhodiola = dow===3 || dow===6;         // mer, sam
   const tyrosine = [0,1,2,4,5].includes(dow);  // dim,lun,mar,jeu,ven
-  // ⚠️ COURSE SUSPENDUE (09/07/2026) — pouce pied gauche Dossier #8 (fracture de stress, 5/10 + œdème après marche 20 km).
-  // Suspension jusqu'à décision du 10/07. Pour réactiver la course : remettre "dow===1 || dow===3 || dow===5".
-  const jourCourse = false; // ÉTAIT : dow===1 || dow===3 || dow===5 (lun,mer,ven)
+  const jourCourse = dow===1 || dow===3 || dow===5;  // lun, mer, ven
   const sardines = dow===2 || dow===6;         // mar,sam
   const yogaYin = dow===5;                     // ven
   const bainRecup = dow===4;                   // jeu (récupération sport)
@@ -97,7 +95,7 @@ function routinePour(dow) {
     { h:"06h40", t:"💪 Stomach vacuum", sub:"2 min, 2–3 reps, cou relâché" },
     { h:"06h45", t:"☕ Café 1", sub:"noir bio" },
     // HE — Diffusion tonique au lever
-    { h:"06h50", type:"he", t:"🌿 Diffusion tonique (Pranarôm Cera)", sub:"Romarin 2 + Pin 2 + Menthe poivrée 1 — 10 min, pièce de vie.", today:true },
+    { h:"06h50", type:"he", t:"🌿 Diffusion tonique (Pranarôm hypersonique)", sub:"Romarin 2 + Pin 2 + Menthe poivrée 1 — 10 min, pièce de vie.", today:true },
     { h:"07h00", t: weekend ? "🚶 Repos actif" : "🏃 Course 5–7,5 km",
       sub: weekend ? "marche, vélo, stretching (pas de course)" : "ou repos actif si > 25 °C ressenti à 7h",
       today: !weekend },
@@ -151,7 +149,7 @@ function routinePour(dow) {
   }
   soirItems.push(
     { h:"21h00", t:"🧘 Étirements adducteurs", sub:"papillon + fente latérale + stomach vacuum · 2–3 min" },
-    { h:"21h00", type:"he", t:"🌿 Diffusion soirée (Pranarôm Cera)", sub:"Orange douce 2 + Lavande 2 + Cèdre 1 — pièce.", today:true },
+    { h:"21h00", type:"he", t:"🌿 Diffusion soirée (Pranarôm hypersonique)", sub:"Orange douce 2 + Lavande 2 + Cèdre 1 — pièce.", today:true },
     { h:"21h10", t:"🕷️ Araignée crânienne", sub:"30 s–1 min : circulation + relâchement des tensions crâniennes. Prépare le palming.", today:true },
     { h:"21h15", t:"👁️ Yoga des yeux", sub:"exercice de l'index + palming (anti-presbytie + nerf vague)" },
     { h:"21h30", t:"🫖 Tisane", sub:"fenouil/gingembre/cannelle si besoin" },
@@ -233,7 +231,6 @@ function routinePour(dow) {
 
 /* Échéances à venir (affichées dans l'app) */
 const ECHEANCES = [
-  { date:"10/07/2026", t:"Décision pouce pied gauche (Dossier #8) — si 5/10 ou œdème persiste → RDV Dr Collin Rasson", warn:true },
   { date:"Déc. 2026", t:"Prise de sang complète (Dr Collin Rasson) — cible LDL 100 mg/dL + PSA (prostate)" },
   { date:"Fin 2026", t:"Bilan ophtalmo (pression intra-oculaire, fond d'œil, accommodation)" },
   { date:"Annuel", t:"Dermatologue (grains de beauté bras gauche)" },
