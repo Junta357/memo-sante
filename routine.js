@@ -114,7 +114,7 @@ function routinePour(dow) {
     { h:"06h40", t:"💪 Stomach vacuum", sub:"2 min, 2–3 reps, cou relâché" },
     { h:"06h45", t:"☕ Café 1", sub:"noir bio" },
     // HE — Diffusion tonique au lever
-    { h:"06h50", type:"he", t:"🌿 Diffusion tonique (Pranarôm hypersonique)", sub:"Romarin 2 + Pin 2 + Menthe poivrée 1 — 10 min, pièce de vie.", today:true },
+    { h:"06h50", type:"he", t:"🌿 Diffusion tonique (Pranarôm hypersonique)", sub:"Romarin 2 + Pin 1 + Menthe 1 — 10 min, fenêtre ouverte.", today:true },
     { h:"07h00", t: weekend ? "🚶 Repos actif" : "🏃 Course 5–7,5 km",
       sub: weekend ? "marche, vélo, stretching (pas de course)" : "ou repos actif si > 25 °C ressenti à 7h",
       today: !weekend },
@@ -123,7 +123,7 @@ function routinePour(dow) {
     matin.push({ h:"07h30", t:"💊 Rhodiola (à jeun)", sub:"pas de Tyrosine aujourd'hui", today:true });
   }
   if (jourCourse) {
-    matin.push({ h:"08h05", type:"he", t:"🌿 Friction post-course", sub:"Laurier 4 + Gingembre 3 + Pin 2 + Immortelle 2 / 1 c.c. amande — adducteurs + cuisses. Immortelle : 1-2 gt suffisent.", today:true });
+    matin.push({ h:"08h05", type:"he", t:"🌿 Friction post-course", sub:"Gingembre 2 + Immortelle 1 + Laurier 1 + Pin 1 / amande (flacon 10 ml) — cuisses + adducteurs, 3-5 min. Immortelle : bénéfice perso observé. Attendre fin transpiration.", today:true });
   }
   matin.push({
     h:"08h30",
@@ -178,13 +178,8 @@ function routinePour(dow) {
     { h:"21h30", t:"🫖 Tisane", sub:"fenouil/gingembre/cannelle si besoin" },
     { h:"22h15", type:"lien", t:"🐱 Un moment avec ton chat", sub:"Quelques minutes de contact — ocytocine bilatérale (toi + chat), baisse du cortisol. Levier de longévité (module OMS n°5)." },
   );
-  // Massage sommeil : lundi + vendredi (après Yoga Yin le vendredi)
-  if (dow===1 || dow===5) {
-    soirItems.push({ h:"22h15", type:"he", t:"🌿 Massage coucher", sub:"Camomille noble 2 + Lavande 1 gt / 1 c.c. amande — épaules, cou, plexus. Camomille = ton n°1 sommeil.", today:true });
-  } else {
-    // Spray oreiller : facultatif les autres soirs
-    soirItems.push({ h:"22h25", type:"he", t:"🌿 Spray oreiller (facultatif)", sub:"Camomille 8 + Lavande 6 + Néroli 3 gt / 30 ml eau — 2-3 pschitts (loin des yeux)", today:false });
-  }
+  // Massage « Apaisement signature » : flacon 30 ml permanent (Camomille noble 6 + Lavande 3 / amande)
+  soirItems.push({ h:"22h15", type:"he", t:"💆 Massage Apaisement signature", sub:"Camomille noble 6 + Lavande 3 gt / amande 30 ml (flacon permanent) — plexus, trapèzes, côtés+arrière du cou. Massage lent.", today:true });
   soirItems.push({ h:"22h30", t:"🌙 Début jeûne nocturne", sub:"~14 h jusqu'à 8h30" });
   if (yogaYin) {
     soirItems.push({ h:"21h45", t:"🧘 Yoga Yin", sub:"30 min (vendredi soir) — 8 postures débutant, sans matériel (coussin + serviette). Détail dans reference-yoga-yin.md", today:true });
@@ -235,14 +230,17 @@ function routinePour(dow) {
     titre: "🌿 Recettes HE (référence)",
     open: false,
     items: [
-      { h:"", type:"recette", t:"Sommeil — Camomille noble (n°1)", sub:"Massage : Camomille 2 + Lavande 1 / 5 ml amande (épaules/cou/plexus). Spray oreiller : Camomille 8 + Lavande 6 + Néroli 3 / 30 ml eau." },
-      { h:"", type:"recette", t:"Récup. course", sub:"Friction : Laurier 4 + Gingembre 3 + Pin 2 + Immortelle 2 / 5 ml amande (adducteurs+cuisses). Immortelle 1-2 gt max." },
-      { h:"", type:"recette", t:"Genou droit", sub:"Immortelle 2 + Laurier 2 / 5 ml amande. ⚠️ Signe neuro → avis médical, l'HE accompagne seulement." },
-      { h:"", type:"recette", t:"Énergie / concentration", sub:"Roll-on : Pin 3 + Épinette 3 + Romarin 2 + Menthe 2 / jojoba. Roll-on réflexion : Laurier 4 + Citronnier 3 + Romarin 3 / amande." },
-      { h:"", type:"recette", t:"Ventre gonflé / digestion", sub:"Cardamome 2 + Menthe 1 + Gingembre 1 / 5 ml amande — massage circulaire sens horaire." },
-      { h:"", type:"recette", t:"Sérum visage", sub:"Palmarosa 2-3 + Lavande 2-3 / 1 c.à s. Rose musquée — 1-2×/jour. Éviter contour des yeux." },
-      { h:"", type:"recette", t:"Bain de pieds relaxation (mer/dim)", sub:"Lavande 2 + Camomille noble 1 + Néroli 1 (4 gt) / 1 bouchon Base Neutre Puressentiel → eau. Jamais d'HE directe dans l'eau. Sel Epsom séparé." },
-      { h:"", type:"recette", t:"Bain de pieds sportif (au ressenti)", sub:"Pin sylvestre 2 + Gingembre 1 + Lavande 1 (4 gt) / 1 bouchon Base Neutre → eau + sel Epsom séparé. 1-2×/sem max." },
+      { h:"", type:"recette", t:"Massage Apaisement signature", sub:"Camomille noble 6 + Lavande 3 / amande 30 ml (flacon permanent). Plexus, trapèzes, cou. Recours de l'endormissement difficile et de la rumination." },
+      { h:"", type:"recette", t:"Friction post-course", sub:"Gingembre 2 + Immortelle 1 + Laurier 1 + Pin 1 / amande 10 ml (flacon d'essai). Cuisses + adducteurs, 3-5 min. Bénéfice Immortelle observé personnellement." },
+      { h:"", type:"recette", t:"Roll-on Laurier — focalisation", sub:"Laurier noble 2 + Romarin cinéole 2 / jojoba 10 ml. Poignets au début d'une session de réflexion ou pour un trac." },
+      { h:"", type:"recette", t:"Sérum visage", sub:"Rose musquée 10 ml + Jojoba 5 ml + Palmarosa 1 + Lavande 1 (flacon 15 ml). Le soir, 2-4 gt, visage+cou. Éviter contour des yeux." },
+      { h:"", type:"recette", t:"Huile à barbe", sub:"Jojoba 15 ml + Amande 15 ml + Cèdre 3 gt (flacon 30 ml permanent)." },
+      { h:"", type:"recette", t:"Confort abdominal", sub:"Cardamome 2 + Menthe 1 + Gingembre 1 / amande 10 ml. 6-10 gt, massage abdominal ~3 min (uniquement si vrai ballonnement)." },
+      { h:"", type:"recette", t:"Sticks (3)", sub:"1 Romarin (départ/focalisation) · 2 Menthe (coup de barre) · 3 Lavande (réveil nocturne). 1 inspiration/narine, refermer." },
+      { h:"", type:"recette", t:"Diffusion tonique matin", sub:"Romarin 2 + Pin 1 + Menthe 1 — 1h max, fenêtre ouverte." },
+      { h:"", type:"recette", t:"Diffusion soir", sub:"Orange 2 + Lavande 2 + Cèdre 1 — 1h max, fenêtre ouverte. Remplacée par bain de pieds les soirs de bain." },
+      { h:"", type:"recette", t:"Bain de pieds relaxation (mer/dim)", sub:"Lavande 2 + Camomille noble 1 + Néroli 1 (4 gt) / 1 bouchon Base Neutre → eau. Jamais d'HE directe. Sel Epsom séparé." },
+      { h:"", type:"recette", t:"Bain de pieds sportif (au ressenti)", sub:"Pin 2 + Gingembre 1 + Lavande 1 (4 gt) / 1 bouchon Base Neutre → eau + sel Epsom séparé. 1-2×/sem max." },
     ]
   });
 
