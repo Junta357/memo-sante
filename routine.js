@@ -116,7 +116,7 @@ function routinePour(dow) {
     // HE — Diffusion tonique au lever
     { h:"06h50", type:"he", t:"🌿 Diffusion tonique (Pranarôm hypersonique)", sub:"Romarin 2 + Pin 1 + Menthe 1 — 10 min, fenêtre ouverte.", today:true },
     { h:"07h00", t: weekend ? "🚶 Repos actif" : "🏃 Course 5–7,5 km",
-      sub: weekend ? "marche, vélo, stretching (pas de course)" : "ou repos actif si > 25 °C ressenti à 7h",
+      sub: weekend ? "marche, vélo, stretching (pas de course)" : "ou repos actif si > 25 °C ressenti à 7h · 🦶 pouce G : si >5/10 ou œdème → marcher",
       today: !weekend },
   ];
   if (rhodiola) {
@@ -220,6 +220,7 @@ function routinePour(dow) {
       { h:"", type:"alerte", t:"🐱 Chat", sub:"Diffusion en bas → fenêtre ouverte. Jamais d'HE appliquée sur le chat." },
       { h:"", type:"alerte", t:"🌡️ Météo > 25 °C à 7h", sub:"pas de course → fractionné ou repos" },
       { h:"", type:"alerte", t:"🦵 Adducteur > 3/10 ou boiterie", sub:"réduire / marcher, étirements obligatoires" },
+      { h:"", type:"alerte", t:"🦶 Pouce pied G (Dossier #8)", sub:"fracture de stress — si >5/10, œdème ou réveil nocturne → suspendre la course (marche/vélo) + RDV Dr Collin Rasson" },
       { h:"", type:"alerte", t:"💧 Transit trop rapide", sub:"réduire magnésium" },
       { h:"", type:"alerte", t:"☕ Anxiété, palpitations, insomnie", sub:"réduire caféine et/ou Tyrosine/Rhodiola" },
     ]
