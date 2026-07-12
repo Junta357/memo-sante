@@ -85,20 +85,7 @@ function routinePour(dow) {
   const dayItems = [];
   // Croyance du jour (rotation 18 croyances) — en tête
   dayItems.push({ h:"", type:"croy", t:"✦ Croyance du jour", sub:croyanceDuJour() + " — un rappel à laisser résonner aujourd'hui. (Développement personnel)" });
-// Valeur du jour (rotation 7 valeurs, dossier Mon parcours) — distinct des croyances
-// Registre différent : éthique personnelle (Mon parcours), pas performance (PNL).
-  { const v = valeurDuJour(); dayItems.push({ h:"", type:"croy", t:"⚓ Valeur du jour — " + v.nom, sub:v.q + " (Mon parcours)" }); }
-  if (weekend)      dayItems.push({ h:"", t:"🚶 Repos actif", sub:"marche, vélo, stretching — pas de course", today:true });
-  else if (jourCourse) dayItems.push({ h:"", t:"🏃 Jour de course", sub:"5–7,5 km · privilégie le Jus B au repas 1 + friction post-course", today:true });
-  else              dayItems.push({ h:"", t:"⚠️ Course suspendue (pouce pied G)", sub:"Dossier #8 — fracture de stress, en observation 24h. Remplace par marche/vélo pour éviter la pression d'avant-pied. Décision le 10/07.", today:true });
-  if (rhodiola)     dayItems.push({ h:"", t:"💊 Rhodiola aujourd'hui", sub:"7h30 à jeun · pas de Tyrosine aujourd'hui", today:true });
-  if (tyrosine)     dayItems.push({ h:"", t:"💊 Tyrosine aujourd'hui", sub:"8h30 · pas de Rhodiola aujourd'hui", today:true });
-  if (sardines)     dayItems.push({ h:"", t:"🐟 Sardines", sub:"1 boîte au souper", today:true });
-  if (bainRecup)    dayItems.push({ h:"", t:"🛁 Bain récupération", sub:"ce soir — Gingembre/Pin/Épinette + sel Epsom", today:true });
-  if (yogaYin)      dayItems.push({ h:"", t:"🧘 Yoga Yin 30 min", sub:"ce soir — 8 postures, sans matériel, séquence dans reference-yoga-yin.md", today:true });
-  if (renforcement) dayItems.push({ h:"", t:"💪 Renforcement (~25 min)", sub:"Jambes/core (squat, fente, pompe inclinée, planche, pont) + bras haltères 5 kg (curl biceps 2×12 + élévation latérale 2×12) + suspension barre de traction (3 séries submax, objectif 2 min — mesurer au chrono). ⚠️ Si fatigue globale ou adducteur > 3/10 → saute les bras, garde le cœur. Garde-fou épaules : jamais jusqu'à l'échec musculaire.", today:true });
-  if (weekend)      dayItems.push({ h:"", type:"lien", t:"🤝 Contact humain aujourd'hui", sub:"Visite, appel, main sur l'épaule, câlin court. Co-régulation émotionnelle + ocytocine. Levier longévité (module OMS n°5 — lien social)." });
-  if (dimanche)     dayItems.push({ h:"", t:"🧘 Rituel bien-être (~25 min, ~15h)", sub:"🕷️ Araignée crânienne (1 min, transition) → fauteuil shiatsu Medisana MC825 + casque Sennheiser Momentum 4 (ANC) : méditation Cléret OU bols/nature, yeux fermés. Diffuseur Pranarôm Cera : Orange douce 15 + Petit grain 6 + 1 gt Valériane. Pas de thé/tisane hors créneaux. Récupération de la semaine + nerf vague.", today:true });
+  dayItems.push({ h:"", type:"lien", t:"🤝 Contact humain aujourd'hui", sub:"Visite, appel, main sur l'épaule, câlin court. Co-régulation émotionnelle + ocytocine. Levier longévité (module OMS n°5 — lien social)." });
   sections.push({ titre:"📌 Aujourd'hui", open:true, items:dayItems });
 
   /* ====== MATIN ====== */
@@ -106,11 +93,11 @@ function routinePour(dow) {
     { h:"06h30", t:"Réveil", sub:"simulateur d'aube" },
     { h:"06h35", t:"👁️ Yoga des yeux", sub:"5 clignements conscients (hydrate la cornée, réveille les yeux). ⚠️ Pas de palming le matin : il active le parasympathique (endort) — geste du soir uniquement.", today:true },
     // Acupression — réveil (araignée crânienne)
-    { h:"06h35", type:"acu", t:"🕷️ Araignée crânienne", sub:"Réveil du sommet du crâne (30 s–1 min) : circulation + clarté + détente.", today:true },
+    { h:"06h35", t:"🕷️ Araignée crânienne", sub:"Réveil du sommet du crâne (30 s–1 min) : circulation + clarté + détente.", today:true },
     { h:"06h40", t:"💪 Stomach vacuum", sub:"2 min, 2–3 reps, cou relâché" },
     { h:"06h45", t:"☕ Café 1", sub:"noir bio" },
     // HE — Diffusion tonique au lever
-    { h:"06h50", type:"he", t:"🌿 Diffusion tonique (Pranarôm Cera)", sub:"Romarin 2 + Pin 2 + Menthe poivrée 1 — 10 min, pièce de vie. 🐱 Chat en bas → fenêtre ouverte.", today:true },
+    { h:"06h50", type:"he", t:"🌿 Diffusion tonique (Pranarôm Cera)", sub:"Romarin 2 + Pin 2 + Menthe poivrée 1 — 10 min, pièce de vie.", today:true },
     { h:"07h00", t: weekend ? "🚶 Repos actif" : "🏃 Course 5–7,5 km",
       sub: weekend ? "marche, vélo, stretching (pas de course)" : "ou repos actif si > 25 °C ressenti à 7h",
       today: !weekend },
@@ -120,7 +107,6 @@ function routinePour(dow) {
   }
   if (jourCourse) {
     matin.push({ h:"08h05", type:"he", t:"🌿 Friction post-course", sub:"Laurier 4 + Gingembre 3 + Pin 2 + Immortelle 2 / 1 c.c. amande — adducteurs + cuisses. Immortelle : 1-2 gt suffisent.", today:true });
-    matin.push({ h:"08h10", type:"acu", t:"🤚 ST36 (2 min/jambe)", sub:"Post-course : 4 doigts sous la rotule, 1 pouce avant le tibia. Anti-inflammatoire (axe vague-surrénale). Le point des 100 maladies." });
   }
   matin.push({
     h:"08h30",
@@ -139,21 +125,25 @@ function routinePour(dow) {
       { h:"10h00", t:"☕ Café 2 + noix 30 g", sub:"mélange + noix du Brésil = 1 SEULE/jour" },
       { h:"13h00", t:"💊 Spiruline Blue Bio", sub:"2 gélules, à jeun" },
       { h:"14h00", t:"🥗 Repas 1 + D3+K2",
-        sub:`légumes crus + fruits + jus Kuvings + 1 goutte D3+K2 · ${jourCourse?"Jus B (cardio)":"Jus A ou B au choix"} · 🥄 Faim ou soif ? Gorgée d'eau d'abord. Pause en mangeant pour estimer la faim.`,
+        sub:`légumes crus + fruits + jus Kuvings + 1 goutte D3+K2 · ${jourCourse?"Jus B (cardio)":"Jus A ou B au choix"}`,
         today:jourCourse },
       { h:"14h15", t:"🍵 Matcha", sub:"1 c. à café (~2 g), eau 80 °C" },
-      // Acupression — reset parasympathique au matcha
-      { h:"14h15", type:"acu", t:"🤚 PC6 (cohérence 5,5)", sub:"2 min : respiration 5 s inspire / 5 s expire. PC6 = 3 doigts au-dessus du pli du poignet, entre les 2 tendons. Reset parasympathique de mi-journée." },
       { h:"16h00", t:"🍫 Chocolat noir 85 %", sub:"20–30 g bio · DERNIÈRE caféine" },
     ]
   });
 
   /* ====== SOIR ====== */
+  // Valeur du jour (rotation 7 valeurs, dossier Mon parcours) — constat de fin de journée
+  { const v = valeurDuJour();
+    const valueItems = [
+      { h:"", type:"croy", t:"⚓ Valeur du jour — " + v.nom, sub:v.q + " (Mon parcours)" },
+    ];
+    sections.push({ titre:"⚓ Valeur du jour", open:true, items:valueItems });
+  }
+
   const soirItems = [
     { h:"18h00", t:"🍲 Souper", sub:"protéines + légumes cuits + glucides + Omega-3 + Mg + Ashwagandha" },
     { h:"18h10", t:"🚶 Marche post-prandiale", sub:"10 min (si temp. OK)" },
-    // Acupression — digestion en marchant
-    { h:"18h10", type:"acu", t:"🤚 SP6 (1 min/jambe)", sub:"En marchant, pression légère. 4 doigts au-dessus de la malléole interne, derrière le tibia. Aide la digestion. ⚠️ Blessure adducteur → membre sain uniquement." },
   ];
   if (bainRecup) {
     soirItems.push({ h:"20h30", type:"he", t:"🛁 Bain récupération sport",
@@ -161,17 +151,12 @@ function routinePour(dow) {
   }
   soirItems.push(
     { h:"21h00", t:"🧘 Étirements adducteurs", sub:"papillon + fente latérale + stomach vacuum · 2–3 min" },
-    { h:"21h00", type:"he", t:"🌿 Diffusion soirée (Pranarôm Cera)", sub:"Orange douce 2 + Lavande 2 + Cèdre 1 — pièce. 🐱 Chat → fenêtre ouverte.", today:true },
-    { h:"21h10", type:"acu", t:"🕷️ Araignée crânienne (soir)", sub:"30 s–1 min : circulation + relâchement des tensions crâniennes. Prépare le palming (synergie tête→yeux).", today:true },
+    { h:"21h00", type:"he", t:"🌿 Diffusion soirée (Pranarôm Cera)", sub:"Orange douce 2 + Lavande 2 + Cèdre 1 — pièce.", today:true },
+    { h:"21h10", t:"🕷️ Araignée crânienne", sub:"30 s–1 min : circulation + relâchement des tensions crâniennes. Prépare le palming.", today:true },
     { h:"21h15", t:"👁️ Yoga des yeux", sub:"exercice de l'index + palming (anti-presbytie + nerf vague)" },
     { h:"21h30", t:"🫖 Tisane", sub:"fenouil/gingembre/cannelle si besoin" },
-    // Acupression — nourrir le Dantian
-    { h:"21h30", type:"acu", t:"🤚 CV4 (main posée)", sub:"3 doigts sous le nombril, main posée + respiration basse. Nourrit le Dantian inférieur, recharge le réservoir." },
     { h:"22h15", type:"he", t:"🌿 Massage coucher", sub:"Camomille noble 2 + Lavande 1 gt / 1 c.c. amande — épaules, cou, plexus. Camomille = ton n°1 sommeil.", today:true },
-    // Toucher — câlin chat (présence corporelle apaisante)
     { h:"22h15", type:"lien", t:"🐱 Un moment avec ton chat", sub:"Quelques minutes de contact — ocytocine bilatérale (toi + chat), baisse du cortisol. Levier de longévité (module OMS n°5)." },
-    // Acupression — induction du sommeil
-    { h:"22h15", type:"acu", t:"🤚 HT7 + Yin Tang + KD1", sub:"Au lit : HT7 (1 min/main, pli externe du poignet) + Yin Tang (30 s, entre les sourcils) + KD1 (1 min/pied, plante). Induit le sommeil." },
     { h:"22h25", type:"he", t:"🌿 Spray oreiller", sub:"Camomille 8 + Lavande 6 + Néroli 3 gt / 30 ml eau — 2-3 pschitts (loin des yeux)", today:true },
     { h:"22h30", t:"🌙 Début jeûne nocturne", sub:"~14 h jusqu'à 8h30" },
   );
