@@ -91,7 +91,7 @@ function routinePour(dow) {
   /* ====== MATIN ====== */
   const matin = [
     { h:"06h30", t:"Réveil", sub:"simulateur d'aube" },
-    { h:"06h35", t:"👁️ Yoga des yeux", sub:"5 clignements conscients (hydrate la cornée, réveille les yeux). ⚠️ Pas de palming le matin : il active le parasympathique (endort) — geste du soir uniquement.", today:true },
+    { h:"06h35", t:"👁️ Yoga des yeux", sub:"5 clignements conscients — hydrate la cornée, réveille les yeux.", today:true },
     // Acupression — réveil (araignée crânienne)
     { h:"06h35", t:"🕷️ Araignée crânienne", sub:"Réveil du sommet du crâne (30 s–1 min) : circulation + clarté + détente.", today:true },
     { h:"06h40", t:"💪 Stomach vacuum", sub:"2 min, 2–3 reps, cou relâché" },
