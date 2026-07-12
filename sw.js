@@ -4,12 +4,12 @@
      manifest) → les mises à jour sont vues dès la prochaine ouverture.
    - cache-first pour les icônes (changent rarement, économise du réseau).
    - Fallback offline : si le réseau échoue, on sert le cache. */
-const CACHE = "memo-sante-v20";
+const CACHE = "memo-sante-v21";
 const PRINCIPAUX = ["./","./index.html","./routine.js","./manifest.json","./sw.js","./firebase.js"];
 const ASSETS = [
   ...PRINCIPAUX,
-  "./icons/icon-192.png","./icons/icon-512.png","./icons/icon-512-maskable.png",
-  "./icons/favicon-32.png","./icons/apple-touch-180.png"
+  "./icons/icon-192-v2.png","./icons/icon-512-v2.png","./icons/icon-512-maskable-v2.png",
+  "./icons/favicon-32-v2.png","./icons/apple-touch-180-v2.png"
 ];
 
 self.addEventListener("install", e=>{
