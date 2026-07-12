@@ -77,6 +77,24 @@ function routinePour(dow) {
   const dimanche = dow===0;                    // dim (rituel bien-être)
   const weekend = dow===0 || dow===6;
 
+  // --- Rotation des jus Kuvings ---
+  // 4 jus santé en rotation cyclique A→B→C→D (modulo 4, jour de l'année)
+  // + 1 jus plaisir le week-end, alterné semaine paire/impaire (joker selon l'envie)
+  const JUS_SANTE = [
+    { nom:"A — Vert épicé", compo:"céleri, kiwi, orange, gingembre, curcuma" },
+    { nom:"B — Vasculaire nitrates", compo:"poivron rouge, pastèque, betterave, menthe" },
+    { nom:"C — Rouge tomate", compo:"tomate, céleri, fenouil, huile d'olive" },
+    { nom:"D — Bleu-violet", compo:"myrtilles, carotte, concombre, orange" },
+  ];
+  const JUS_PLAISIR = [
+    { nom:"P1 — Tropical solaire", compo:"mangue, ananas, orange, pomme" },
+    { nom:"P2 — Grenade royale", compo:"grenade, orange, pomme, menthe" },
+  ];
+  const _d = new Date();
+  const _jourAnnee = Math.floor((_d - new Date(_d.getFullYear(),0,0)) / 86400000);
+  const jusSanteDuJour = JUS_SANTE[_jourAnnee % 4];
+  const plaisirWeekend = weekend ? JUS_PLAISIR[Math.floor(_jourAnnee/7) % 2] : null;
+
   const sections = [];
 
   /* ====== AUJOURD'HUI (contexte immédiat, en premier) ====== */
@@ -123,8 +141,8 @@ function routinePour(dow) {
       { h:"10h00", t:"☕ Café 2 + noix 30 g", sub:"mélange + noix du Brésil = 1 SEULE/jour" },
       { h:"13h00", t:"💊 Spiruline Blue Bio", sub:"2 gélules, à jeun" },
       { h:"14h00", t:"🥗 Repas 1 + D3+K2",
-        sub:`légumes crus + fruits + jus Kuvings + 1 goutte D3+K2 · ${jourCourse?"Jus B (cardio)":"Jus A ou B au choix"}`,
-        today:jourCourse },
+        sub:`légumes crus (fenouil, carottes, poivron, chou-fleur) + fruits + jus Kuvings + 1 goutte D3+K2 · 🥤 ${jusSanteDuJour.nom} (${jusSanteDuJour.compo})` + (plaisirWeekend ? ` · 🍹 Plaisir optionnel : ${plaisirWeekend.nom}` : ""),
+        today:true },
       { h:"14h15", t:"🍵 Matcha", sub:"1 c. à café (~2 g), eau 80 °C" },
       { h:"16h00", t:"🍫 Chocolat noir 85 %", sub:"20–30 g bio · DERNIÈRE caféine" },
     ]
@@ -168,7 +186,7 @@ function routinePour(dow) {
     titre: "💧 Hydratation",
     open: false,
     items: [
-      { h:"", t:"Eau Mont Roucous", sub:"1,5 à 3 L/jour (été → viser haut). Rein sensible : hydratation forte obligatoire." },
+      { h:"", t:"Eau Mont Roucous", sub:"1,5 à 3 L/jour (été → viser haut). Atrophie rénale congénitale : hydratation forte obligatoire." },
       { h:"", t:"Vichy Célestins 500 ml", sub:"après la course" },
     ]
   });
@@ -192,8 +210,8 @@ function routinePour(dow) {
     open: false,
     items: [
       { h:"", type:"alerte", t:"🦵 Genou droit — signe neuro", sub:"Avis médical à programmer. Fourmillements / perte de sensation → consulter. L'HE (Immortelle+Laurier) accompagne, ne traite pas." },
-      { h:"", type:"alerte", t:"🌞 Grains de beauté — bras gauche", sub:"Dermato annuel. Pas d'agrume (citron, bergamote, orange) sur le bras gauche avant soleil. Photosensibilité 12h." },
-      { h:"", type:"alerte", t:"🫘 Rein sensible", sub:"Pas d'ingestion d'HE. Hydratation forte. Menthe proscrite en ingestion." },
+      { h:"", type:"alerte", t:"🌞 Grains de beauté — bras gauche", sub:"Dermato annuel. Pas d'HE d'agrume (citron, bergamote, orange) appliquée sur la peau avant soleil (photosensibilisation cutanée). L'ingestion d'un jus d'agrume ne nécessite pas d'éviter le soleil." },
+      { h:"", type:"alerte", t:"🫘 Atrophie rénale congénitale", sub:"Suivie par néphrologue. Pas d'ingestion d'HE. Hydratation forte. Menthe proscrite en ingestion." },
       { h:"", type:"alerte", t:"🐱 Chat", sub:"Diffusion en bas → fenêtre ouverte. Jamais d'HE appliquée sur le chat." },
       { h:"", type:"alerte", t:"🌡️ Météo > 25 °C à 7h", sub:"pas de course → fractionné ou repos" },
       { h:"", type:"alerte", t:"🦵 Adducteur > 3/10 ou boiterie", sub:"réduire / marcher, étirements obligatoires" },
