@@ -105,8 +105,8 @@ function routinePour(dow) {
   const matin = [
     { h:"06h30", t:"Réveil", sub:"simulateur d'aube" },
     { h:"06h35", t:"👁️ Yoga des yeux", sub:"5 clignements conscients (hydrate la cornée, réveille les yeux). ⚠️ Pas de palming le matin : il active le parasympathique (endort) — geste du soir uniquement.", today:true },
-    // Acupression — réveil (araignée crânienne, remplace Du20 manuel + GI4)
-    { h:"06h35", type:"acu", t:"🕷️ Araignée crânienne", sub:"Réveil du sommet du crâne (30 s–1 min) : circulation + clarté + détente. Plus agréable que Du20 manuel. (Remplace GI4+Du20 depuis le 10/07/2026.)", today:true },
+    // Acupression — réveil (araignée crânienne)
+    { h:"06h35", type:"acu", t:"🕷️ Araignée crânienne", sub:"Réveil du sommet du crâne (30 s–1 min) : circulation + clarté + détente.", today:true },
     { h:"06h40", t:"💪 Stomach vacuum", sub:"2 min, 2–3 reps, cou relâché" },
     { h:"06h45", t:"☕ Café 1", sub:"noir bio" },
     // HE — Diffusion tonique au lever
@@ -142,7 +142,7 @@ function routinePour(dow) {
         sub:`légumes crus + fruits + jus Kuvings + 1 goutte D3+K2 · ${jourCourse?"Jus B (cardio)":"Jus A ou B au choix"} · 🥄 Faim ou soif ? Gorgée d'eau d'abord. Pause en mangeant pour estimer la faim.`,
         today:jourCourse },
       { h:"14h15", t:"🍵 Matcha", sub:"1 c. à café (~2 g), eau 80 °C" },
-      // Acupression — reset parasympathique au matcha (PC6 seul, GI4 retiré)
+      // Acupression — reset parasympathique au matcha
       { h:"14h15", type:"acu", t:"🤚 PC6 (cohérence 5,5)", sub:"2 min : respiration 5 s inspire / 5 s expire. PC6 = 3 doigts au-dessus du pli du poignet, entre les 2 tendons. Reset parasympathique de mi-journée." },
       { h:"16h00", t:"🍫 Chocolat noir 85 %", sub:"20–30 g bio · DERNIÈRE caféine" },
     ]
