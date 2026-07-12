@@ -72,7 +72,8 @@ function routinePour(dow) {
   const jourCourse = dow===1 || dow===3 || dow===5;  // lun, mer, ven
   const sardines = dow===2 || dow===6;         // mar,sam
   const yogaYin = dow===5;                     // ven
-  const bainRecup = dow===4;                   // jeu (récupération sport)
+  const bainPiedsRelax = dow===3 || dow===0;   // mer, dim (bain de pieds relaxation)
+  const bainPiedsSport = dow===4;              // jeu (bain de pieds sportif au ressenti)
   const renforcement = dow===2 || dow===4;     // mar, jeu (renforcement ~25 min)
   const dimanche = dow===0;                    // dim (rituel bien-être)
   const weekend = dow===0 || dow===6;
@@ -161,9 +162,13 @@ function routinePour(dow) {
     { h:"18h00", t:"🍲 Souper", sub:"protéines + légumes cuits + glucides + Omega-3 + Mg + Ashwagandha" },
     { h:"18h10", t:"🚶 Marche post-prandiale", sub:"10 min (si temp. OK)" },
   ];
-  if (bainRecup) {
-    soirItems.push({ h:"20h30", type:"he", t:"🛁 Bain récupération sport",
-      sub:"Gingembre 2 + Pin 2 + Épinette 2 gt + poignée sel Epsom — 20 min. Pré-diluer dans ½ c.c. d'huile. ❌ Jamais menthe ni eucalyptus dans le bain.", today:true });
+  if (bainPiedsRelax) {
+    soirItems.push({ h:"20h30", type:"he", t:"🦶 Bain de pieds relaxation",
+      sub:"Lavande 2 + Camomille noble 1 + Néroli 1 (4 gt) / 1 bouchon Base Neutre Puressentiel → eau chaude. 10-20 min. ⚠️ Base Neutre à acheter. ❌ Jamais menthe ni eucalyptus.", today:true });
+  }
+  if (bainPiedsSport) {
+    soirItems.push({ h:"20h30", type:"he", t:"🦶 Bain de pieds sportif (au ressenti)",
+      sub:"Pin sylvestre 2 + Gingembre 1 + Lavande 1 (4 gt) / 1 bouchon Base Neutre Puressentiel → eau + sel Epsom séparément. 15-20 min. Retour au calme + hydratation avant. ⚠️ Base Neutre à acheter. Ne remplace pas la friction.", today:true });
   }
   soirItems.push(
     { h:"21h00", t:"🧘 Étirements adducteurs", sub:"papillon + fente latérale + stomach vacuum · 2–3 min" },
@@ -171,11 +176,16 @@ function routinePour(dow) {
     { h:"21h10", t:"🕷️ Araignée crânienne", sub:"30 s–1 min : circulation + relâchement des tensions crâniennes. Prépare le palming.", today:true },
     { h:"21h15", t:"👁️ Yoga des yeux", sub:"exercice de l'index + palming (anti-presbytie + nerf vague)" },
     { h:"21h30", t:"🫖 Tisane", sub:"fenouil/gingembre/cannelle si besoin" },
-    { h:"22h15", type:"he", t:"🌿 Massage coucher", sub:"Camomille noble 2 + Lavande 1 gt / 1 c.c. amande — épaules, cou, plexus. Camomille = ton n°1 sommeil.", today:true },
     { h:"22h15", type:"lien", t:"🐱 Un moment avec ton chat", sub:"Quelques minutes de contact — ocytocine bilatérale (toi + chat), baisse du cortisol. Levier de longévité (module OMS n°5)." },
-    { h:"22h25", type:"he", t:"🌿 Spray oreiller", sub:"Camomille 8 + Lavande 6 + Néroli 3 gt / 30 ml eau — 2-3 pschitts (loin des yeux)", today:true },
-    { h:"22h30", t:"🌙 Début jeûne nocturne", sub:"~14 h jusqu'à 8h30" },
   );
+  // Massage sommeil : lundi + vendredi (après Yoga Yin le vendredi)
+  if (dow===1 || dow===5) {
+    soirItems.push({ h:"22h15", type:"he", t:"🌿 Massage coucher", sub:"Camomille noble 2 + Lavande 1 gt / 1 c.c. amande — épaules, cou, plexus. Camomille = ton n°1 sommeil.", today:true });
+  } else {
+    // Spray oreiller : facultatif les autres soirs
+    soirItems.push({ h:"22h25", type:"he", t:"🌿 Spray oreiller (facultatif)", sub:"Camomille 8 + Lavande 6 + Néroli 3 gt / 30 ml eau — 2-3 pschitts (loin des yeux)", today:false });
+  }
+  soirItems.push({ h:"22h30", t:"🌙 Début jeûne nocturne", sub:"~14 h jusqu'à 8h30" });
   if (yogaYin) {
     soirItems.push({ h:"21h45", t:"🧘 Yoga Yin", sub:"30 min (vendredi soir) — 8 postures débutant, sans matériel (coussin + serviette). Détail dans reference-yoga-yin.md", today:true });
   }
@@ -231,7 +241,8 @@ function routinePour(dow) {
       { h:"", type:"recette", t:"Énergie / concentration", sub:"Roll-on : Pin 3 + Épinette 3 + Romarin 2 + Menthe 2 / jojoba. Roll-on réflexion : Laurier 4 + Citronnier 3 + Romarin 3 / amande." },
       { h:"", type:"recette", t:"Ventre gonflé / digestion", sub:"Cardamome 2 + Menthe 1 + Gingembre 1 / 5 ml amande — massage circulaire sens horaire." },
       { h:"", type:"recette", t:"Sérum visage", sub:"Palmarosa 2-3 + Lavande 2-3 / 1 c.à s. Rose musquée — 1-2×/jour. Éviter contour des yeux." },
-      { h:"", type:"recette", t:"Bain récupération (jeu)", sub:"Gingembre 2 + Pin 2 + Épinette 2 + sel Epsom. Pré-diluer. ❌ Jamais menthe ni eucalyptus." },
+      { h:"", type:"recette", t:"Bain de pieds relaxation (mer/dim)", sub:"Lavande 2 + Camomille noble 1 + Néroli 1 (4 gt) / 1 bouchon Base Neutre Puressentiel → eau. Jamais d'HE directe dans l'eau. Sel Epsom séparé." },
+      { h:"", type:"recette", t:"Bain de pieds sportif (au ressenti)", sub:"Pin sylvestre 2 + Gingembre 1 + Lavande 1 (4 gt) / 1 bouchon Base Neutre → eau + sel Epsom séparé. 1-2×/sem max." },
     ]
   });
 
