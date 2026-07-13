@@ -251,11 +251,11 @@ function routinePour(dow) {
   ];
   if (bainPiedsRelax) {
     soirItems.push({ h:"20h30", type:"he", t:"🦶 Bain de pieds relaxation",
-      sub:"Lavande 2 + Camomille noble 1 + Néroli 1 (4 gt) / 1 bouchon Base Neutre Puressentiel → eau chaude. 10-20 min. ⚠️ Base Neutre à acheter. ❌ Jamais menthe ni eucalyptus. Remplace la diffusion du soir.", today:true });
+      sub:"Lavande 2 + Camomille noble 1 + Néroli 1 (4 gt) / 1 bouchon Base Neutre Puressentiel → eau chaude. 10-20 min. ❌ Jamais menthe ni eucalyptus. Remplace la diffusion du soir.", today:true });
   }
   if (bainPiedsSport) {
     soirItems.push({ h:"20h30", type:"he", t:"🦶 Bain de pieds sportif (au ressenti)",
-      sub:"Pin sylvestre 2 + Gingembre 1 + Lavande 1 (4 gt) / 1 bouchon Base Neutre Puressentiel → eau + sel Epsom séparément. 15-20 min. Retour au calme + hydratation avant. ⚠️ Base Neutre à acheter. Ne remplace pas la friction. Remplace la diffusion du soir.", today:true });
+      sub:"Pin sylvestre 2 + Gingembre 1 + Lavande 1 (4 gt) / 1 bouchon Base Neutre Puressentiel → eau + sel Epsom séparément. 15-20 min. Retour au calme + hydratation avant. Ne remplace pas la friction. Remplace la diffusion du soir.", today:true });
   }
   soirItems.push({ h:"21h00", t:"🧘 Mobilité douce + stomach vacuum", sub:"2–3 min — mobilité générale selon le confort (pas d'étirement ciblé comme traitement)." });
   // Diffusion soirée : supprimée les soirs de bain de pieds (le bain remplace la diffusion) et le samedi (soirée repos olfactif)
