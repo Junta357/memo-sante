@@ -76,6 +76,7 @@ function routinePour(dow) {
   const bainPiedsSport = dow===4;              // jeu (bain de pieds sportif au ressenti)
   const renforcement = dow===2 || dow===4;     // mar, jeu (renforcement ~25 min)
   const dimanche = dow===0;                    // dim (rituel bien-être)
+  const samedi = dow===6;                      // sam (soirée repos olfactif)
   const weekend = dow===0 || dow===6;
 
   // --- Rotation des jus Kuvings ---
@@ -176,8 +177,8 @@ function routinePour(dow) {
       sub:"Pin sylvestre 2 + Gingembre 1 + Lavande 1 (4 gt) / 1 bouchon Base Neutre Puessentiel → eau + sel Epsom séparément. 15-20 min. Retour au calme + hydratation avant. ⚠️ Base Neutre à acheter. Ne remplace pas la friction. Remplace la diffusion du soir.", today:true });
   }
   soirItems.push({ h:"21h00", t:"🧘 Mobilité douce + stomach vacuum", sub:"2–3 min — mobilité générale selon le confort (pas d'étirement ciblé comme traitement)." });
-  // Diffusion soirée : supprimée les soirs de bain de pieds (le bain remplace la diffusion)
-  if (!bainPiedsRelax && !bainPiedsSport) {
+  // Diffusion soirée : supprimée les soirs de bain de pieds (le bain remplace la diffusion) et le samedi (soirée repos olfactif)
+  if (!bainPiedsRelax && !bainPiedsSport && !samedi) {
     soirItems.push({ h:"21h00", type:"he", t:"🌿 Diffusion soirée", sub:"Orange douce 2 + Lavande 2 + Cèdre 1 — jusqu'à 1 h max, fenêtre ouverte.", today:true });
   }
   soirItems.push({ h:"21h10", t:"🕷️ Araignée crânienne", sub:"30 s–1 min.", today:true });
@@ -241,7 +242,7 @@ function routinePour(dow) {
       { h:"", type:"recette", t:"Massage Apaisement signature", sub:"Camomille noble 6 + Lavande 3 / amande 30 ml (flacon permanent). Plexus, trapèzes, cou. Recours de l'endormissement difficile et de la rumination." },
       { h:"", type:"recette", t:"Friction post-course", sub:"Gingembre 2 + Immortelle 1 + Laurier 1 + Pin 1 / amande 10 ml (flacon d'essai). Cuisses et zone musculaire périphérique confortable, 3-5 min. Bénéfice Immortelle observé personnellement." },
       { h:"", type:"recette", t:"Roll-on Laurier — focalisation", sub:"Laurier noble 2 + Romarin cinéole 2 / jojoba 10 ml. Poignets au début d'une session de réflexion ou pour un trac." },
-      { h:"", type:"recette", t:"Sérum visage", sub:"Rose musquée 10 ml + Jojoba 5 ml + Palmarosa 1 + Lavande 1 (flacon 15 ml). Le soir, 2-4 gt, visage+cou. Éviter contour des yeux." },
+      { h:"", type:"recette", t:"Sérum visage", sub:"Rose musquée 10 ml + Jojoba 5 ml + Palmarosa 1 + Lavande 1 (flacon 15 ml). Le soir selon le besoin, 2-4 gt, visage+cou. Max 1/jour. Éviter contour des yeux." },
       { h:"", type:"recette", t:"Huile à barbe", sub:"Jojoba 15 ml + Amande 15 ml + Cèdre 3 gt (flacon 30 ml permanent)." },
       { h:"", type:"recette", t:"Confort abdominal", sub:"Cardamome 2 + Menthe 1 + Gingembre 1 / amande 10 ml. 6-10 gt, massage abdominal ~3 min (uniquement si vrai ballonnement)." },
       { h:"", type:"recette", t:"Sticks (3)", sub:"1 Romarin (départ/focalisation) · 2 Menthe (coup de barre) · 3 Lavande (réveil nocturne). 1 inspiration/narine, refermer." },
