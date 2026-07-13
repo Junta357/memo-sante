@@ -148,9 +148,9 @@ function routinePour(dow) {
     { h:"14h15", t:"🍵 Matcha", sub:"1 c. à café (~2 g), eau 80 °C" },
     { h:"16h00", t:"🍫 Chocolat noir 85 %", sub:"20–30 g bio · DERNIÈRE caféine" },
   ];
-  // Rituel bien-être dominical (~25 min, dimanche ~15h)
+  // Rituel bien-être dominical (~25 min, dimanche — moment libre dans la journée)
   if (dimanche) {
-    jourItems.push({ h:"~15h00", t:"🧘 Rituel bien-être dominical", sub:"Fauteuil shiatsu MC825 (15 min, arrêt auto, mode au ressenti) + casque Sennheiser (méditation/bols) + diffusion Orange 2 + Lavande 2 + Cèdre 1. ~25 min. Pas de caféine (eau).", today:true });
+    jourItems.push({ h:"", t:"🧘 Rituel bien-être dominical", sub:"Fauteuil shiatsu MC825 (15 min, arrêt auto, mode au ressenti) + casque Sennheiser (méditation/bols) + diffusion Orange 2 + Lavande 2 + Cèdre 1. ~25 min, moment libre. Pas de caféine (eau).", today:true });
   }
   sections.push({ titre:"🌤️ Journée", open:true, items:jourItems });
 
