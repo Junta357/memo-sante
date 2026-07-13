@@ -119,7 +119,7 @@ function routinePour(dow) {
     matin.push({ h:"06h50", type:"he", t:"🌿 Diffusion tonique", sub:"Romarin 2 + Pin 1 + Menthe 1 — 10 min, fenêtre ouverte.", today:true });
   }
   matin.push({ h:"07h00", t: weekend ? "🚶 Repos actif" : "🏃 Course / entraînement",
-    sub: weekend ? "marche, vélo, mobilité" : "07h00 → ~08h30 · si > 25 °C ressenti → repos actif · 🦶 pouce G : si >5/10 ou œdème → marcher",
+    sub: weekend ? "marche, vélo, mobilité" : "07h00 → ~08h30 · si > 25 °C ressenti → repos actif",
     today: !weekend });
   matin.push({
     h:"07h30",
@@ -174,7 +174,7 @@ function routinePour(dow) {
     { h:"21h00", type:"he", t:"🌿 Diffusion soirée (Pranarôm hypersonique)", sub:"Orange douce 2 + Lavande 2 + Cèdre 1 — pièce.", today:true },
     { h:"21h10", t:"🕷️ Araignée crânienne", sub:"30 s–1 min : circulation + relâchement des tensions crâniennes. Prépare le palming.", today:true },
     { h:"21h15", t:"👁️ Yoga des yeux", sub:"exercice de l'index + palming (anti-presbytie + nerf vague)" },
-    { h:"21h30", t:"🫖 Tisane", sub:"fenouil/gingembre/cannelle si besoin" },
+    { h:"19h00", t:"🫖 Tisane", sub:"fenouil/gingembre/cannelle — digestion (après souper)" },
   );
   // Massage « Apaisement signature » : flacon 30 ml permanent (Camomille noble 6 + Lavande 3 / amande)
   soirItems.push({ h:"22h15", type:"he", t:"💆 Massage Apaisement signature", sub:"Camomille noble 6 + Lavande 3 gt / amande 30 ml (flacon permanent) — plexus, trapèzes, côtés+arrière du cou. Massage lent.", today:true });
@@ -218,7 +218,6 @@ function routinePour(dow) {
       { h:"", type:"alerte", t:"🐱 Chat", sub:"Diffusion en bas → fenêtre ouverte. Jamais d'HE appliquée sur le chat." },
       { h:"", type:"alerte", t:"🌡️ Météo > 25 °C à 7h", sub:"pas de course → fractionné ou repos" },
       { h:"", type:"alerte", t:"🦵 Douleur aine/pli de hanche G > 3/10", sub:"réduire l'allure / marcher · mobilité douce selon confort (pas d'étirement comme traitement) · 2 ajustements max puis consult" },
-      { h:"", type:"alerte", t:"🦶 Pouce pied G (Dossier #8)", sub:"fracture de stress — si >5/10, œdème ou réveil nocturne → suspendre la course (marche/vélo) + RDV Dr Collin Rasson" },
       { h:"", type:"alerte", t:"💧 Transit trop rapide", sub:"réduire magnésium" },
       { h:"", type:"alerte", t:"☕ Anxiété, palpitations, insomnie", sub:"réduire caféine et/ou Tyrosine/Rhodiola" },
     ]
