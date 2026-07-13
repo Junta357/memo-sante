@@ -148,13 +148,9 @@ function routinePour(dow) {
     { h:"14h15", t:"🍵 Matcha", sub:"1 c. à café (~2 g), eau 80 °C" },
     { h:"16h00", t:"🍫 Chocolat noir 85 %", sub:"20–30 g bio · DERNIÈRE caféine" },
   ];
-  // Fauteuil MC825 — récupération les jours de renforcement (mar/jeu), sans heure fixe, mode au ressenti (arrêt auto 15 min)
-  if (renforcement) {
-    jourItems.push({ h:"", t:"💺 Fauteuil MC825 — récupération", sub:"15 min (arrêt automatique), sans heure fixe · mode au ressenti (dos, nuque, acupression, chaleur…). Relâchement post-renforcement.", today:true });
-  }
   // Rituel bien-être dominical (~25 min, dimanche ~15h)
   if (dimanche) {
-    jourItems.push({ h:"~15h00", t:"🧘 Rituel bien-être dominical", sub:"Fauteuil shiatsu MC825 (15 min, arrêt auto) + casque Sennheiser (méditation/bols) + diffusion Orange 2 + Lavande 2 + Cèdre 1. ~25 min. Pas de caféine (eau).", today:true });
+    jourItems.push({ h:"~15h00", t:"🧘 Rituel bien-être dominical", sub:"Fauteuil shiatsu MC825 (15 min, arrêt auto, mode au ressenti) + casque Sennheiser (méditation/bols) + diffusion Orange 2 + Lavande 2 + Cèdre 1. ~25 min. Pas de caféine (eau).", today:true });
   }
   sections.push({ titre:"🌤️ Journée", open:true, items:jourItems });
 
