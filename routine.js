@@ -102,7 +102,7 @@ function routinePour(dow) {
   const dayItems = [];
   // Croyance du jour (rotation 18 croyances) — en tête
   dayItems.push({ h:"", type:"croy", t:"✦ Croyance du jour", sub:croyanceDuJour() + " — un rappel à laisser résonner aujourd'hui. (Développement personnel)" });
-  dayItems.push({ h:"", type:"lien", t:"🤝 Contact humain aujourd'hui", sub:"Visite, appel, main sur l'épaule, câlin court. Co-régulation émotionnelle + ocytocine. Levier longévité (module OMS n°5 — lien social)." });
+  dayItems.push({ h:"", type:"lien", t:"🤝 Contact vivant — au fil de la journée", sub:"Leviers libres, quand l'occasion se présente — pas une tâche à heure fixe. 🐱 Contact avec ton chat (lorsqu'il est disponible) : ocytocine bilatérale, baisse du cortisol. 🤝 Contact humain (visite, appel, main sur l'épaule, câlin court) : co-régulation émotionnelle. Levier longévité (module OMS n°5 — lien social + toucher)." });
   sections.push({ titre:"📌 Aujourd'hui", open:true, items:dayItems });
 
   /* ====== MATIN ====== */
@@ -113,25 +113,32 @@ function routinePour(dow) {
     { h:"06h35", t:"🕷️ Araignée crânienne", sub:"Réveil du sommet du crâne (30 s–1 min) : circulation + clarté + détente.", today:true },
     { h:"06h40", t:"💪 Stomach vacuum", sub:"2 min, 2–3 reps, cou relâché" },
     { h:"06h45", t:"☕ Café 1", sub:"noir bio" },
-    // HE — Diffusion tonique au lever
-    { h:"06h50", type:"he", t:"🌿 Diffusion tonique (Pranarôm hypersonique)", sub:"Romarin 2 + Pin 1 + Menthe 1 — 10 min, fenêtre ouverte.", today:true },
-    { h:"07h00", t: weekend ? "🚶 Repos actif" : "🏃 Course 5–7,5 km",
-      sub: weekend ? "marche, vélo, stretching (pas de course)" : "ou repos actif si > 25 °C ressenti à 7h · 🦶 pouce G : si >5/10 ou œdème → marcher",
-      today: !weekend },
   ];
+  // 06h50 — aromathérapie conditionnelle : diffusion tonique les jours SANS course,
+  // stick Départ/Focalisation les jours AVEC course (remplace la diffusion, ne s'ajoute pas)
+  if (jourCourse) {
+    matin.push({ h:"06h50", type:"he", t:"🌿 Stick « Départ / Focalisation »", sub:"Stick 1 (Romarin mèche) — 1 inspiration/narine, juste avant de partir. Remplace la diffusion du matin (jour de course).", today:true });
+  } else {
+    matin.push({ h:"06h50", type:"he", t:"🌿 Diffusion tonique (Pranarôm hypersonique)", sub:"Romarin 2 + Pin 1 + Menthe 1 — 10 min, fenêtre ouverte. (Jour sans course.)", today:true });
+  }
+  // 07h00 → ~08h30 — course ou mouvement
+  matin.push({ h:"07h00", t: weekend ? "🚶 Repos actif" : "🏃 Course / entraînement",
+    sub: weekend ? "marche, vélo, mobilité (pas de course). Créneau 07h00 → ~08h30 libre." : "07h00 → ~08h30. Reprise en cours (suivi-reprise-course). Examen niveau 4 réussi (5 km/32 min) — passage au programme niveau 4 (objectif final 10 km/1h09) reporté tant que la douleur aine/pli de hanche G n'est pas en voie de résolution. Temps 10 km réaliste au départ : ~1h30. Si > 25 °C ressenti à 7h → repos actif. 🦶 pouce G : si >5/10 ou œdème → marcher.",
+    today: !weekend });
   if (rhodiola) {
     matin.push({ h:"07h30", t:"💊 Rhodiola (à jeun)", sub:"pas de Tyrosine aujourd'hui", today:true });
   }
+  // vers 08h30 — friction post-course après le retour (transpiration terminée, peau propre/sèche)
   if (jourCourse) {
-    matin.push({ h:"08h05", type:"he", t:"🌿 Friction post-course", sub:"Gingembre 2 + Immortelle 1 + Laurier 1 + Pin 1 / amande (flacon 10 ml) — cuisses et zone musculaire périphérique confortable, 3-5 min. Immortelle : bénéfice perso observé. Attendre fin transpiration.", today:true });
+    matin.push({ h:"~08h30", type:"he", t:"🌿 Friction post-course (après le retour)", sub:"Gingembre 2 + Immortelle 1 + Laurier 1 + Pin 1 / amande (flacon 10 ml) — cuisses et zone musculaire périphérique confortable, 3-5 min. Attendre fin transpiration, peau nettoyée et sèche. Immortelle : bénéfice perso observé. Confort/récupération subjective, pas un traitement de la douleur.", today:true });
   }
+  // 09h00 — bloc cohérent : encas + complément du jour + thé vert
   matin.push({
-    h:"08h30",
-    t: tyrosine ? "💊 Tyrosine + encas" : "🍊 Encas post-course",
-    sub: tyrosine ? "1 orange bio + fromage d'abbaye (pas de Rhodiola aujourd'hui)" : "1 orange bio + morceau fromage d'abbaye",
-    today: tyrosine
+    h:"09h00",
+    t: tyrosine ? "💊 Tyrosine + 🍊 Encas + 🍵 Thé vert" : "🍊 Encas + 🍵 Thé vert",
+    sub: tyrosine ? "1 orange bio + fromage d'abbaye + Tyrosine (pas de Rhodiola aujourd'hui) + 1 tasse de thé vert" : "1 orange bio + morceau fromage d'abbaye + 1 tasse de thé vert",
+    today: true
   });
-  matin.push({ h:"08h45", t:"🍵 Thé vert", sub:"1 tasse" });
   sections.push({ titre:"🌅 Matin", open:true, items:matin });
 
   /* ====== JOURNÉE ====== */
@@ -139,7 +146,7 @@ function routinePour(dow) {
     titre: "🌤️ Journée",
     open: true,
     items: [
-      { h:"10h00", t:"☕ Café 2 + noix 30 g", sub:"mélange + noix du Brésil = 1 SEULE/jour" },
+      { h:"11h00", t:"☕ Café 2 + noix 30 g", sub:"mélange + noix du Brésil = 1 SEULE/jour" },
       { h:"13h00", t:"💊 Spiruline Blue Bio", sub:"2 gélules, à jeun" },
       { h:"14h00", t:"🥗 Repas 1 + D3+K2",
         sub:`légumes crus (fenouil, carottes, poivron, chou-fleur) + fruits + jus Kuvings + 1 goutte D3+K2 · 🥤 ${jusSanteDuJour.nom} (${jusSanteDuJour.compo})` + (plaisirWeekend ? ` · 🍹 Plaisir optionnel : ${plaisirWeekend.nom}` : ""),
@@ -176,7 +183,6 @@ function routinePour(dow) {
     { h:"21h10", t:"🕷️ Araignée crânienne", sub:"30 s–1 min : circulation + relâchement des tensions crâniennes. Prépare le palming.", today:true },
     { h:"21h15", t:"👁️ Yoga des yeux", sub:"exercice de l'index + palming (anti-presbytie + nerf vague)" },
     { h:"21h30", t:"🫖 Tisane", sub:"fenouil/gingembre/cannelle si besoin" },
-    { h:"22h15", type:"lien", t:"🐱 Un moment avec ton chat", sub:"Quelques minutes de contact — ocytocine bilatérale (toi + chat), baisse du cortisol. Levier de longévité (module OMS n°5)." },
   );
   // Massage « Apaisement signature » : flacon 30 ml permanent (Camomille noble 6 + Lavande 3 / amande)
   soirItems.push({ h:"22h15", type:"he", t:"💆 Massage Apaisement signature", sub:"Camomille noble 6 + Lavande 3 gt / amande 30 ml (flacon permanent) — plexus, trapèzes, côtés+arrière du cou. Massage lent.", today:true });
