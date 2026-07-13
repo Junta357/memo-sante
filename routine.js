@@ -102,43 +102,35 @@ function routinePour(dow) {
   const dayItems = [];
   // Croyance du jour (rotation 18 croyances) — en tête
   dayItems.push({ h:"", type:"croy", t:"✦ Croyance du jour", sub:croyanceDuJour() + " — un rappel à laisser résonner aujourd'hui. (Développement personnel)" });
-  dayItems.push({ h:"", type:"lien", t:"🤝 Contact vivant — au fil de la journée", sub:"Leviers libres, quand l'occasion se présente — pas une tâche à heure fixe. 🐱 Contact avec ton chat (lorsqu'il est disponible) : ocytocine bilatérale, baisse du cortisol. 🤝 Contact humain (visite, appel, main sur l'épaule, câlin court) : co-régulation émotionnelle. Levier longévité (module OMS n°5 — lien social + toucher)." });
+  dayItems.push({ h:"", type:"lien", t:"🤝 Contact vivant", sub:"🐱 chat + 🤝 humain — quand l'occasion se présente, sans heure fixe." });
   sections.push({ titre:"📌 Aujourd'hui", open:true, items:dayItems });
 
   /* ====== MATIN ====== */
   const matin = [
     { h:"06h30", t:"Réveil", sub:"simulateur d'aube" },
-    { h:"06h35", t:"👁️ Yoga des yeux", sub:"5 clignements conscients — hydrate la cornée, réveille les yeux.", today:true },
-    // Acupression — réveil (araignée crânienne)
-    { h:"06h35", t:"🕷️ Araignée crânienne", sub:"Réveil du sommet du crâne (30 s–1 min) : circulation + clarté + détente.", today:true },
-    { h:"06h40", t:"💪 Stomach vacuum", sub:"2 min, 2–3 reps, cou relâché" },
+    { h:"06h35", t:"👁️ Yoga des yeux", sub:"5 clignements conscients.", today:true },
+    { h:"06h35", t:"🕷️ Araignée crânienne", sub:"30 s–1 min.", today:true },
+    { h:"06h40", t:"💪 Stomach vacuum", sub:"2 min, 2–3 reps" },
     { h:"06h45", t:"☕ Café 1", sub:"noir bio" },
   ];
-  // 06h50 — aromathérapie conditionnelle : diffusion tonique les jours SANS course,
-  // stick Départ/Focalisation les jours AVEC course (remplace la diffusion, ne s'ajoute pas)
   if (jourCourse) {
-    matin.push({ h:"06h50", type:"he", t:"🌿 Stick « Départ / Focalisation »", sub:"Stick 1 (Romarin mèche) — 1 inspiration/narine, juste avant de partir. Remplace la diffusion du matin (jour de course).", today:true });
+    matin.push({ h:"06h50", type:"he", t:"🌿 Stick « Départ / Focalisation »", sub:"Stick 1 Romarin — 1 inspiration/narine, juste avant de partir.", today:true });
   } else {
-    matin.push({ h:"06h50", type:"he", t:"🌿 Diffusion tonique (Pranarôm hypersonique)", sub:"Romarin 2 + Pin 1 + Menthe 1 — 10 min, fenêtre ouverte. (Jour sans course.)", today:true });
+    matin.push({ h:"06h50", type:"he", t:"🌿 Diffusion tonique", sub:"Romarin 2 + Pin 1 + Menthe 1 — 10 min, fenêtre ouverte.", today:true });
   }
-  // 07h00 → ~08h30 — course ou mouvement
   matin.push({ h:"07h00", t: weekend ? "🚶 Repos actif" : "🏃 Course / entraînement",
-    sub: weekend ? "marche, vélo, mobilité (pas de course). Créneau 07h00 → ~08h30 libre." : "07h00 → ~08h30. Reprise en cours (suivi-reprise-course). Examen niveau 4 réussi (5 km/32 min) — passage au programme niveau 4 (objectif final 10 km/1h09) reporté tant que la douleur aine/pli de hanche G n'est pas en voie de résolution. Temps 10 km réaliste au départ : ~1h30. Si > 25 °C ressenti à 7h → repos actif. 🦶 pouce G : si >5/10 ou œdème → marcher.",
+    sub: weekend ? "marche, vélo, mobilité" : "07h00 → ~08h30 · si > 25 °C ressenti → repos actif · 🦶 pouce G : si >5/10 ou œdème → marcher",
     today: !weekend });
-  if (rhodiola) {
-    matin.push({ h:"07h30", t:"💊 Rhodiola (à jeun)", sub:"pas de Tyrosine aujourd'hui", today:true });
-  }
-  // vers 08h30 — friction post-course après le retour (transpiration terminée, peau propre/sèche)
-  if (jourCourse) {
-    matin.push({ h:"~08h30", type:"he", t:"🌿 Friction post-course (après le retour)", sub:"Gingembre 2 + Immortelle 1 + Laurier 1 + Pin 1 / amande (flacon 10 ml) — cuisses et zone musculaire périphérique confortable, 3-5 min. Attendre fin transpiration, peau nettoyée et sèche. Immortelle : bénéfice perso observé. Confort/récupération subjective, pas un traitement de la douleur.", today:true });
-  }
-  // 09h00 — bloc cohérent : encas + complément du jour + thé vert
   matin.push({
-    h:"09h00",
-    t: tyrosine ? "💊 Tyrosine + 🍊 Encas + 🍵 Thé vert" : "🍊 Encas + 🍵 Thé vert",
-    sub: tyrosine ? "1 orange bio + fromage d'abbaye + Tyrosine (pas de Rhodiola aujourd'hui) + 1 tasse de thé vert" : "1 orange bio + morceau fromage d'abbaye + 1 tasse de thé vert",
+    h:"07h30",
+    t: rhodiola ? "💊 Rhodiola (à jeun)" : "💊 Tyrosine (à jeun)",
+    sub: rhodiola ? "pas de Tyrosine aujourd'hui" : "pas de Rhodiola aujourd'hui",
     today: true
   });
+  if (jourCourse) {
+    matin.push({ h:"~08h30", type:"he", t:"🌿 Friction post-course", sub:"Gingembre 2 + Immortelle 1 + Laurier 1 + Pin 1 / amande 10 ml — cuisses, 3-5 min. Après transpiration, peau sèche.", today:true });
+  }
+  matin.push({ h:"09h00", t:"🍊 Encas + 🍵 Thé vert", sub:"1 orange bio + fromage d'abbaye + 1 tasse de thé vert", today:true });
   sections.push({ titre:"🌅 Matin", open:true, items:matin });
 
   /* ====== JOURNÉE ====== */
