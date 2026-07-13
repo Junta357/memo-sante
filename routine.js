@@ -113,24 +113,26 @@ function routinePour(dow) {
     { h:"06h40", t:"💪 Stomach vacuum", sub:"2 min, 2–3 reps" },
     { h:"06h45", t:"☕ Café 1", sub:"noir bio" },
   ];
+  // 06h50 — aromathérapie conditionnelle : stick les jours de course, diffusion les autres
   if (jourCourse) {
-    matin.push({ h:"06h50", type:"he", t:"🌿 Stick « Départ / Focalisation »", sub:"Stick 1 Romarin — 1 inspiration/narine, juste avant de partir.", today:true });
+    matin.push({ h:"06h50", type:"he", t:"🌿 Stick « Départ / Focalisation »", sub:"Stick 1 Romarin — 1 inspiration/narine, juste avant de partir. Remplace la diffusion du matin.", today:true });
   } else {
-    matin.push({ h:"06h50", type:"he", t:"🌿 Diffusion tonique", sub:"Romarin 2 + Pin 1 + Menthe 1 — 10 min, fenêtre ouverte.", today:true });
+    matin.push({ h:"06h50", type:"he", t:"🌿 Diffusion tonique", sub:"Romarin 2 + Pin 1 + Menthe 1 — jusqu'à 1 h max, fenêtre ouverte, arrêt manuel possible plus tôt.", today:true });
   }
-  matin.push({ h:"07h00", t: weekend ? "🚶 Repos actif" : "🏃 Course / entraînement",
-    sub: weekend ? "marche, vélo, mobilité" : "07h00 → ~08h30 · si > 25 °C ressenti → repos actif",
-    today: !weekend });
-  matin.push({
-    h:"07h30",
-    t: rhodiola ? "💊 Rhodiola (à jeun)" : "💊 Tyrosine (à jeun)",
-    sub: rhodiola ? "pas de Tyrosine aujourd'hui" : "pas de Rhodiola aujourd'hui",
-    today: true
-  });
+  // 07h00 → ~08h30 — course (lun/mer/ven) ou repos actif (les autres jours)
+  matin.push({ h:"07h00", t: jourCourse ? "🏃 Course / entraînement" : "🚶 Repos actif",
+    sub: jourCourse ? "07h00 → ~08h30 · si > 25 °C ressenti → repos actif (marche/mobilité)" : "marche, vélo, mobilité",
+    today: jourCourse });
   if (jourCourse) {
     matin.push({ h:"~08h30", type:"he", t:"🌿 Friction post-course", sub:"Gingembre 2 + Immortelle 1 + Laurier 1 + Pin 1 / amande 10 ml — cuisses, 3-5 min. Après transpiration, peau sèche.", today:true });
   }
-  matin.push({ h:"09h00", t:"🍊 Encas + 🍵 Thé vert", sub:"1 orange bio + fromage d'abbaye + 1 tasse de thé vert", today:true });
+  // 09h00 — bloc cohérent : encas + complément du jour + thé vert
+  matin.push({
+    h:"09h00",
+    t: rhodiola ? "💊 Rhodiola + 🍊 Encas + 🍵 Thé vert" : "💊 Tyrosine + 🍊 Encas + 🍵 Thé vert",
+    sub: rhodiola ? "1 orange bio + fromage d'abbaye + Rhodiola (rotation) + 1 tasse de thé vert" : "1 orange bio + fromage d'abbaye + Tyrosine (rotation) + 1 tasse de thé vert",
+    today: true
+  });
   sections.push({ titre:"🌅 Matin", open:true, items:matin });
 
   /* ====== JOURNÉE ====== */
@@ -141,7 +143,7 @@ function routinePour(dow) {
       { h:"11h00", t:"☕ Café 2 + noix 30 g", sub:"mélange + noix du Brésil = 1 SEULE/jour" },
       { h:"13h00", t:"💊 Spiruline Blue Bio", sub:"2 gélules, à jeun" },
       { h:"14h00", t:"🥗 Repas 1 + D3+K2",
-        sub:`légumes crus (fenouil, carottes, poivron, chou-fleur) + fruits + jus Kuvings + 1 goutte D3+K2 · 🥤 ${jusSanteDuJour.nom} (${jusSanteDuJour.compo})` + (plaisirWeekend ? ` · 🍹 Plaisir optionnel : ${plaisirWeekend.nom}` : ""),
+        sub:`légumes crus + fruits + jus Kuvings + 1 goutte D3+K2 · 🥤 ${jusSanteDuJour.nom} (${jusSanteDuJour.compo})` + (plaisirWeekend ? ` · 🍹 Alternative plaisir (week-end, selon l'envie — remplace le jus santé) : ${plaisirWeekend.nom}` : ""),
         today:true },
       { h:"14h15", t:"🍵 Matcha", sub:"1 c. à café (~2 g), eau 80 °C" },
       { h:"16h00", t:"🍫 Chocolat noir 85 %", sub:"20–30 g bio · DERNIÈRE caféine" },
@@ -160,28 +162,31 @@ function routinePour(dow) {
   const soirItems = [
     { h:"18h00", t:"🍲 Souper", sub:"protéines + légumes cuits + glucides + Omega-3 + Mg + Ashwagandha" },
     { h:"18h10", t:"🚶 Marche post-prandiale", sub:"10 min (si temp. OK)" },
+    { h:"19h00", t:"🫖 Tisane", sub:"fenouil/gingembre/cannelle si besoin — digestion (après souper)" },
   ];
   if (bainPiedsRelax) {
     soirItems.push({ h:"20h30", type:"he", t:"🦶 Bain de pieds relaxation",
-      sub:"Lavande 2 + Camomille noble 1 + Néroli 1 (4 gt) / 1 bouchon Base Neutre Puressentiel → eau chaude. 10-20 min. ⚠️ Base Neutre à acheter. ❌ Jamais menthe ni eucalyptus.", today:true });
+      sub:"Lavande 2 + Camomille noble 1 + Néroli 1 (4 gt) / 1 bouchon Base Neutre Puressentiel → eau chaude. 10-20 min. ⚠️ Base Neutre à acheter. ❌ Jamais menthe ni eucalyptus. Remplace la diffusion du soir.", today:true });
   }
   if (bainPiedsSport) {
     soirItems.push({ h:"20h30", type:"he", t:"🦶 Bain de pieds sportif (au ressenti)",
-      sub:"Pin sylvestre 2 + Gingembre 1 + Lavande 1 (4 gt) / 1 bouchon Base Neutre Puressentiel → eau + sel Epsom séparément. 15-20 min. Retour au calme + hydratation avant. ⚠️ Base Neutre à acheter. Ne remplace pas la friction.", today:true });
+      sub:"Pin sylvestre 2 + Gingembre 1 + Lavande 1 (4 gt) / 1 bouchon Base Neutre Puessentiel → eau + sel Epsom séparément. 15-20 min. Retour au calme + hydratation avant. ⚠️ Base Neutre à acheter. Ne remplace pas la friction. Remplace la diffusion du soir.", today:true });
   }
-  soirItems.push(
-    { h:"21h00", t:"🧘 Mobilité douce", sub:"papillon + fente latérale + stomach vacuum · 2–3 min" },
-    { h:"21h00", type:"he", t:"🌿 Diffusion soirée (Pranarôm hypersonique)", sub:"Orange douce 2 + Lavande 2 + Cèdre 1 — pièce.", today:true },
-    { h:"21h10", t:"🕷️ Araignée crânienne", sub:"30 s–1 min : circulation + relâchement des tensions crâniennes. Prépare le palming.", today:true },
-    { h:"21h15", t:"👁️ Yoga des yeux", sub:"exercice de l'index + palming (anti-presbytie + nerf vague)" },
-    { h:"19h00", t:"🫖 Tisane", sub:"fenouil/gingembre/cannelle — digestion (après souper)" },
-  );
-  // Massage « Apaisement signature » : flacon 30 ml permanent (Camomille noble 6 + Lavande 3 / amande)
-  soirItems.push({ h:"22h15", type:"he", t:"💆 Massage Apaisement signature", sub:"Camomille noble 6 + Lavande 3 gt / amande 30 ml (flacon permanent) — plexus, trapèzes, côtés+arrière du cou. Massage lent.", today:true });
-  soirItems.push({ h:"22h30", t:"🌙 Début jeûne nocturne", sub:"~14 h jusqu'à 8h30" });
+  soirItems.push({ h:"21h00", t:"🧘 Mobilité douce + stomach vacuum", sub:"2–3 min — mobilité générale selon le confort (pas d'étirement ciblé comme traitement)." });
+  // Diffusion soirée : supprimée les soirs de bain de pieds (le bain remplace la diffusion)
+  if (!bainPiedsRelax && !bainPiedsSport) {
+    soirItems.push({ h:"21h00", type:"he", t:"🌿 Diffusion soirée", sub:"Orange douce 2 + Lavande 2 + Cèdre 1 — jusqu'à 1 h max, fenêtre ouverte.", today:true });
+  }
+  soirItems.push({ h:"21h10", t:"🕷️ Araignée crânienne", sub:"30 s–1 min.", today:true });
+  // Yoga des yeux : index + palming en semaine, le vendredi le Yin remplace le palming
+  if (!yogaYin) {
+    soirItems.push({ h:"21h15", t:"👁️ Yoga des yeux", sub:"exercice de l'index + palming (anti-presbytie + nerf vague)" });
+  }
   if (yogaYin) {
-    soirItems.push({ h:"21h45", t:"🧘 Yoga Yin", sub:"30 min (vendredi soir) — 8 postures débutant, sans matériel (coussin + serviette). Détail dans reference-yoga-yin.md", today:true });
+    soirItems.push({ h:"21h45", t:"🧘 Yoga Yin", sub:"30 min (vendredi soir) — 8 postures débutant, sans matériel. Le Yin fait le travail parasympathique du palming. Détail dans reference-yoga-yin.md", today:true });
   }
+  soirItems.push({ h:"22h15", type:"he", t:"💆 Massage Apaisement signature", sub:"Camomille noble 6 + Lavande 3 gt / amande 30 ml — plexus, trapèzes, côtés+arrière du cou. Massage lent.", today:true });
+  soirItems.push({ h:"22h30", t:"🌙 Coucher + jeûne nocturne", sub:"fenêtre alimentaire : dernier apport (souper ~18h30) → encas 9h. ~14-15 h selon l'heure du souper." });
   sections.push({ titre:"🌆 Soir", open:true, items:soirItems });
 
   /* ====== HYDRATATION ====== */
@@ -216,7 +221,7 @@ function routinePour(dow) {
       { h:"", type:"alerte", t:"🌞 Grains de beauté — bras gauche", sub:"Dermato annuel. Pas d'HE d'agrume (citron, bergamote, orange) appliquée sur la peau avant soleil (photosensibilisation cutanée). L'ingestion d'un jus d'agrume ne nécessite pas d'éviter le soleil." },
       { h:"", type:"alerte", t:"🫘 Atrophie rénale congénitale", sub:"Suivie par néphrologue. Pas d'ingestion d'HE. Hydratation forte. Menthe proscrite en ingestion." },
       { h:"", type:"alerte", t:"🐱 Chat", sub:"Diffusion en bas → fenêtre ouverte. Jamais d'HE appliquée sur le chat." },
-      { h:"", type:"alerte", t:"🌡️ Météo > 25 °C à 7h", sub:"pas de course → fractionné ou repos" },
+      { h:"", type:"alerte", t:"🌡️ Météo > 25 °C à 7h", sub:"pas de course → repos actif (marche / mobilité)" },
       { h:"", type:"alerte", t:"🦵 Douleur aine/pli de hanche G > 3/10", sub:"réduire l'allure / marcher · mobilité douce selon confort (pas d'étirement comme traitement) · 2 ajustements max puis consult" },
       { h:"", type:"alerte", t:"💧 Transit trop rapide", sub:"réduire magnésium" },
       { h:"", type:"alerte", t:"☕ Anxiété, palpitations, insomnie", sub:"réduire caféine et/ou Tyrosine/Rhodiola" },
