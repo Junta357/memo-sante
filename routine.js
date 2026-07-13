@@ -123,7 +123,7 @@ function routinePour(dow) {
     matin.push({ h:"07h30", t:"💊 Rhodiola (à jeun)", sub:"pas de Tyrosine aujourd'hui", today:true });
   }
   if (jourCourse) {
-    matin.push({ h:"08h05", type:"he", t:"🌿 Friction post-course", sub:"Gingembre 2 + Immortelle 1 + Laurier 1 + Pin 1 / amande (flacon 10 ml) — cuisses + adducteurs, 3-5 min. Immortelle : bénéfice perso observé. Attendre fin transpiration.", today:true });
+    matin.push({ h:"08h05", type:"he", t:"🌿 Friction post-course", sub:"Gingembre 2 + Immortelle 1 + Laurier 1 + Pin 1 / amande (flacon 10 ml) — cuisses et zone musculaire périphérique confortable, 3-5 min. Immortelle : bénéfice perso observé. Attendre fin transpiration.", today:true });
   }
   matin.push({
     h:"08h30",
@@ -171,7 +171,7 @@ function routinePour(dow) {
       sub:"Pin sylvestre 2 + Gingembre 1 + Lavande 1 (4 gt) / 1 bouchon Base Neutre Puressentiel → eau + sel Epsom séparément. 15-20 min. Retour au calme + hydratation avant. ⚠️ Base Neutre à acheter. Ne remplace pas la friction.", today:true });
   }
   soirItems.push(
-    { h:"21h00", t:"🧘 Étirements adducteurs", sub:"papillon + fente latérale + stomach vacuum · 2–3 min" },
+    { h:"21h00", t:"🧘 Mobilité douce", sub:"papillon + fente latérale + stomach vacuum · 2–3 min" },
     { h:"21h00", type:"he", t:"🌿 Diffusion soirée (Pranarôm hypersonique)", sub:"Orange douce 2 + Lavande 2 + Cèdre 1 — pièce.", today:true },
     { h:"21h10", t:"🕷️ Araignée crânienne", sub:"30 s–1 min : circulation + relâchement des tensions crâniennes. Prépare le palming.", today:true },
     { h:"21h15", t:"👁️ Yoga des yeux", sub:"exercice de l'index + palming (anti-presbytie + nerf vague)" },
@@ -219,7 +219,7 @@ function routinePour(dow) {
       { h:"", type:"alerte", t:"🫘 Atrophie rénale congénitale", sub:"Suivie par néphrologue. Pas d'ingestion d'HE. Hydratation forte. Menthe proscrite en ingestion." },
       { h:"", type:"alerte", t:"🐱 Chat", sub:"Diffusion en bas → fenêtre ouverte. Jamais d'HE appliquée sur le chat." },
       { h:"", type:"alerte", t:"🌡️ Météo > 25 °C à 7h", sub:"pas de course → fractionné ou repos" },
-      { h:"", type:"alerte", t:"🦵 Adducteur > 3/10 ou boiterie", sub:"réduire / marcher, étirements obligatoires" },
+      { h:"", type:"alerte", t:"🦵 Douleur aine/pli de hanche G > 3/10", sub:"réduire l'allure / marcher · mobilité douce selon confort (pas d'étirement comme traitement) · 2 ajustements max puis consult" },
       { h:"", type:"alerte", t:"🦶 Pouce pied G (Dossier #8)", sub:"fracture de stress — si >5/10, œdème ou réveil nocturne → suspendre la course (marche/vélo) + RDV Dr Collin Rasson" },
       { h:"", type:"alerte", t:"💧 Transit trop rapide", sub:"réduire magnésium" },
       { h:"", type:"alerte", t:"☕ Anxiété, palpitations, insomnie", sub:"réduire caféine et/ou Tyrosine/Rhodiola" },
@@ -232,7 +232,7 @@ function routinePour(dow) {
     open: false,
     items: [
       { h:"", type:"recette", t:"Massage Apaisement signature", sub:"Camomille noble 6 + Lavande 3 / amande 30 ml (flacon permanent). Plexus, trapèzes, cou. Recours de l'endormissement difficile et de la rumination." },
-      { h:"", type:"recette", t:"Friction post-course", sub:"Gingembre 2 + Immortelle 1 + Laurier 1 + Pin 1 / amande 10 ml (flacon d'essai). Cuisses + adducteurs, 3-5 min. Bénéfice Immortelle observé personnellement." },
+      { h:"", type:"recette", t:"Friction post-course", sub:"Gingembre 2 + Immortelle 1 + Laurier 1 + Pin 1 / amande 10 ml (flacon d'essai). Cuisses et zone musculaire périphérique confortable, 3-5 min. Bénéfice Immortelle observé personnellement." },
       { h:"", type:"recette", t:"Roll-on Laurier — focalisation", sub:"Laurier noble 2 + Romarin cinéole 2 / jojoba 10 ml. Poignets au début d'une session de réflexion ou pour un trac." },
       { h:"", type:"recette", t:"Sérum visage", sub:"Rose musquée 10 ml + Jojoba 5 ml + Palmarosa 1 + Lavande 1 (flacon 15 ml). Le soir, 2-4 gt, visage+cou. Éviter contour des yeux." },
       { h:"", type:"recette", t:"Huile à barbe", sub:"Jojoba 15 ml + Amande 15 ml + Cèdre 3 gt (flacon 30 ml permanent)." },
