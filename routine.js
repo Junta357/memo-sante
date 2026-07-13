@@ -119,12 +119,14 @@ function routinePour(dow) {
   } else {
     matin.push({ h:"06h50", type:"he", t:"🌿 Diffusion tonique", sub:"Romarin 2 + Pin 1 + Menthe 1 — jusqu'à 1 h max, fenêtre ouverte, arrêt manuel possible plus tôt.", today:true });
   }
-  // 07h00 → ~08h30 — course (lun/mer/ven) ou repos actif (les autres jours)
-  matin.push({ h:"07h00", t: jourCourse ? "🏃 Course / entraînement" : "🚶 Repos actif",
-    sub: jourCourse ? "07h00 → ~08h30 · si > 25 °C ressenti → repos actif (marche/mobilité)" : "marche, vélo, mobilité",
-    today: jourCourse });
+  // 07h00 → ~08h30 — course (lun/mer/ven), renforcement (mar/jeu), ou repos actif (sam/dim)
   if (jourCourse) {
+    matin.push({ h:"07h00", t:"🏃 Course / entraînement", sub:"07h00 → ~08h30 · si > 25 °C ressenti → repos actif (marche/mobilité)", today:true });
     matin.push({ h:"~08h30", type:"he", t:"🌿 Friction post-course", sub:"Gingembre 2 + Immortelle 1 + Laurier 1 + Pin 1 / amande 10 ml — cuisses, 3-5 min. Après transpiration, peau sèche.", today:true });
+  } else if (renforcement) {
+    matin.push({ h:"07h00", t:"💪 Renforcement 25 min", sub:"Squat, fente, pompe inclinée, planche, pont + bras haltères 5 kg (curl + élévation latérale) + suspension barre traction. Garde-fou épaules : jamais jusqu'à l'échec.", today:true });
+  } else {
+    matin.push({ h:"07h00", t:"🚶 Repos actif", sub:"marche, vélo, mobilité", today:false });
   }
   // 09h00 — bloc cohérent : encas + complément du jour + thé vert
   matin.push({
@@ -136,19 +138,20 @@ function routinePour(dow) {
   sections.push({ titre:"🌅 Matin", open:true, items:matin });
 
   /* ====== JOURNÉE ====== */
-  sections.push({
-    titre: "🌤️ Journée",
-    open: true,
-    items: [
-      { h:"11h00", t:"☕ Café 2 + noix 30 g", sub:"mélange + noix du Brésil = 1 SEULE/jour" },
-      { h:"13h00", t:"💊 Spiruline Blue Bio", sub:"2 gélules, à jeun" },
-      { h:"14h00", t:"🥗 Repas 1 + D3+K2",
-        sub:`légumes crus + fruits + jus Kuvings + 1 goutte D3+K2 · 🥤 ${jusSanteDuJour.nom} (${jusSanteDuJour.compo} — composition résumée, recette complète dans reference-jus-kuvings.md)` + (plaisirWeekend ? ` · 🍹 Alternative plaisir week-end (selon l'envie, remplace le jus santé) : ${plaisirWeekend.nom}` : ""),
-        today:true },
-      { h:"14h15", t:"🍵 Matcha", sub:"1 c. à café (~2 g), eau 80 °C" },
-      { h:"16h00", t:"🍫 Chocolat noir 85 %", sub:"20–30 g bio · DERNIÈRE caféine" },
-    ]
-  });
+  const jourItems = [
+    { h:"11h00", t:"☕ Café 2 + noix 30 g", sub:"mélange + noix du Brésil = 1 SEULE/jour" },
+    { h:"13h00", t:"💊 Spiruline Blue Bio", sub:"2 gélules, à jeun" },
+    { h:"14h00", t:"🥗 Repas 1 + D3+K2",
+      sub:`légumes crus + fruits + jus Kuvings + 1 goutte D3+K2 · 🥤 ${jusSanteDuJour.nom} (${jusSanteDuJour.compo} — composition résumée, recette complète dans reference-jus-kuvings.md)` + (plaisirWeekend ? ` · 🍹 Alternative plaisir week-end (selon l'envie, remplace le jus santé) : ${plaisirWeekend.nom}` : ""),
+      today:true },
+    { h:"14h15", t:"🍵 Matcha", sub:"1 c. à café (~2 g), eau 80 °C" },
+    { h:"16h00", t:"🍫 Chocolat noir 85 %", sub:"20–30 g bio · DERNIÈRE caféine" },
+  ];
+  // Rituel bien-être dominical (~25 min, dimanche ~15h)
+  if (dimanche) {
+    jourItems.push({ h:"~15h00", t:"🧘 Rituel bien-être dominical", sub:"Fauteuil shiatsu MC825 + casque Sennheiser (méditation/bols) + diffusion Orange 2 + Lavande 2 + Cèdre 1. ~25 min. Pas de caféine (eau).", today:true });
+  }
+  sections.push({ titre:"🌤️ Journée", open:true, items:jourItems });
 
   /* ====== SOIR ====== */
   // Valeur du jour (rotation 7 valeurs, dossier Mon parcours) — constat de fin de journée
@@ -219,7 +222,7 @@ function routinePour(dow) {
     titre: "🛡️ Points de vigilance",
     open: false,
     items: [
-      { h:"", type:"alerte", t:"🦵 Genou droit — signe neuro", sub:"Avis médical à programmer. Fourmillements / perte de sensation → consulter. L'HE (Immortelle+Laurier) accompagne, ne traite pas." },
+      { h:"", type:"alerte", t:"🦵 Genou droit — signe neuro", sub:"Avis médical à programmer. Fourmillements / perte de sensation → consulter. Les HE ne traitent pas ce symptôme neurologique." },
       { h:"", type:"alerte", t:"🌞 Grains de beauté — bras gauche", sub:"Dermato annuel. Pas d'HE d'agrume (citron, bergamote, orange) appliquée sur la peau avant soleil (photosensibilisation cutanée). L'ingestion d'un jus d'agrume ne nécessite pas d'éviter le soleil." },
       { h:"", type:"alerte", t:"🫘 Atrophie rénale congénitale", sub:"Suivie par néphrologue. Pas d'ingestion d'HE. Hydratation forte. Menthe proscrite en ingestion." },
       { h:"", type:"alerte", t:"🐱 Chat", sub:"Diffusion en bas → fenêtre ouverte. Jamais d'HE appliquée sur le chat." },
