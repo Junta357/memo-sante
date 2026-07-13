@@ -212,8 +212,8 @@ function routinePour(dow) {
       sub:`légumes crus + fruits + jus Kuvings + 1 goutte D3+K2 · 🥤 ${jusSanteDuJour.nom} (${jusSanteDuJour.compo} — composition résumée, recette complète dans reference-jus-kuvings.md)` + (plaisirWeekend ? ` · 🍹 Alternative plaisir week-end (selon l'envie, remplace le jus santé) : ${plaisirWeekend.nom}` : ""),
       today:true },
     { h:"14h15", t:"🍵 Matcha", sub:"1 c. à café (~2 g), eau 80 °C" },
-    { h:"16h00", t:"🍫 Chocolat noir 85 %", sub:"20–30 g bio · DERNIÈRE caféine" },
-  ];
+    { h:"16h00", t:"🍫 Chocolat noir 85 %", sub:"20–30 g bio · DERNIÈRE caféine" }
+  );
   // Rituel bien-être dominical (~25 min, dimanche — moment libre dans la journée)
   if (dimanche) {
     jourItems.push({ h:"", t:"🧘 Rituel bien-être dominical", sub:"Fauteuil shiatsu MC825 (15 min, arrêt auto, mode au ressenti) + casque Sennheiser (méditation/bols) + diffusion Orange 2 + Lavande 2 + Cèdre 1. ~25 min, moment libre. Pas de caféine (eau).", today:true });
