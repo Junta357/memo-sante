@@ -65,6 +65,60 @@ function valeurDuJour(){
   return VALEURS[jourAnnee % VALEURS.length];
 }
 
+/* ============================================================
+   CYCLES COMPLÉMENTS — automatique passif
+   ------------------------------------------------------------
+   Date de début fixe : 1ᵉʳ juillet 2026.
+   Comptage calendaire (pas les cochages).
+   Chaque complément alterne cure → pause → cure… indéfiniment.
+   En pause : l'item disparaît du flux de routine.
+   Reprise : il réapparaît automatiquement au bon jour.
+   ============================================================ */
+const DATE_DEBUT_CYCLES = new Date(2026, 6, 1); // 1ᵉʳ juillet 2026 (mois 0-indexé)
+
+const CYCLES = [
+  { id:"omega3",      nom:"Omega 3",             cure:105, pause:21 },
+  { id:"magnesium",   nom:"Magnésium Marin+Vég", cure:42,  pause:14 },
+  { id:"ashwagandha", nom:"Ashwagandha 500 mg",  cure:49,  pause:21 },
+  { id:"spiruline",   nom:"Spiruline Blue Bio",  cure:21,  pause:7  },
+  { id:"tyrosine",    nom:"Tyrosine 500 mg",     cure:35,  pause:21 },
+  { id:"rhodiola",    nom:"Rhodiola Rosea",      cure:25,  pause:10 },
+];
+
+// Calcule l'état d'un cycle à la date donnée.
+// Retourne { etat, phase, jour, total, reste }
+//   etat : "cure" | "pause"
+//   phase : "debut" (1ʳᵉ moitié) | "fin" (2ᵉ moitié) — pour l'affichage
+//   jour : jour courant dans la phase (1-indexé)
+//   total : durée totale de la phase
+//   reste : jours restants dans la phase
+function etatCycle(cycle, date){
+  const unJour = 86400000;
+  // Jour calendaire écoulé depuis le début (0-indexé : jour 0 = 1ᵉʳ juillet)
+  const jour0 = Math.floor((new Date(date.getFullYear(), date.getMonth(), date.getDate()) - DATE_DEBUT_CYCLES) / unJour);
+  const cycleTotal = cycle.cure + cycle.pause;
+  const posCycle = ((jour0 % cycleTotal) + cycleTotal) % cycleTotal; // 0 .. cycleTotal-1
+  if(posCycle < cycle.cure){
+    const jour = posCycle + 1;
+    return { etat:"cure", jour, total:cycle.cure, reste:cycle.cure - jour };
+  } else {
+    const jour = posCycle - cycle.cure + 1;
+    return { etat:"pause", jour, total:cycle.pause, reste:cycle.pause - jour };
+  }
+}
+
+// Raccourci : état d'un cycle aujourd'hui
+function etatCycleAujourdhui(cycle){
+  return etatCycle(cycle, new Date());
+}
+
+// Raccourci : un complément est-il en cure aujourd'hui ?
+function enCure(id){
+  const c = CYCLES.find(c => c.id === id);
+  if(!c) return true; // inconnu → par sécurité, afficher (ex: D3+K2 non listé)
+  return etatCycleAujourdhui(c).etat === "cure";
+}
+
 function routinePour(dow) {
   // --- Conditions du jour ---
   const rhodiola = dow===3 || dow===6;         // mer, sam
@@ -130,10 +184,17 @@ function routinePour(dow) {
     matin.push({ h:"07h00", t:"🚶 Repos actif", sub:"marche, vélo, mobilité", today:false });
   }
   // 09h00 — bloc cohérent : encas + complément du jour + thé vert
+  // Adaptogène conditionnel : rotation hebdo Tyrosine/Rhodiola, MAIS seulement si le complément est en cure.
+  // Si l'adaptogène du jour est en pause de cycle → aucun adaptogène affiché (juste encas + thé vert).
+  let adaptoNom = null, adaptoEnCure = true;
+  if (rhodiola) { adaptoNom = "Rhodiola"; adaptoEnCure = enCure("rhodiola"); }
+  else if (tyrosine) { adaptoNom = "Tyrosine"; adaptoEnCure = enCure("tyrosine"); }
+  const prefix = adaptoNom && adaptoEnCure ? `💊 ${adaptoNom} + ` : "";
+  const adaptoSub = adaptoNom && adaptoEnCure ? ` + ${adaptoNom} (rotation)` : (adaptoNom ? ` + ${adaptoNom} en pause de cycle` : "");
   matin.push({
     h:"09h00",
-    t: rhodiola ? "💊 Rhodiola + 🍊 Encas + 🍵 Thé vert" : "💊 Tyrosine + 🍊 Encas + 🍵 Thé vert",
-    sub: rhodiola ? "1 orange bio + fromage d'abbaye + Rhodiola (rotation) + 1 tasse de thé vert" : "1 orange bio + fromage d'abbaye + Tyrosine (rotation) + 1 tasse de thé vert",
+    t: prefix + "🍊 Encas + 🍵 Thé vert",
+    sub: "1 orange bio + fromage d'abbaye" + adaptoSub + " + 1 tasse de thé vert",
     today: true
   });
   sections.push({ titre:"🌅 Matin", open:true, items:matin });
@@ -141,7 +202,12 @@ function routinePour(dow) {
   /* ====== JOURNÉE ====== */
   const jourItems = [
     { h:"11h00", t:"☕ Café 2 + noix 30 g", sub:"mélange + noix du Brésil = 1 SEULE/jour" },
-    { h:"13h00", t:"💊 Spiruline Blue Bio", sub:"2 gélules, à jeun" },
+  ];
+  // Spiruline — affichée seulement si en cure (sinon : pause de cycle, disparaît du flux)
+  if (enCure("spiruline")) {
+    jourItems.push({ h:"13h00", t:"💊 Spiruline Blue Bio", sub:"2 gélules, à jeun", today:true });
+  }
+  jourItems.push(
     { h:"14h00", t:"🥗 Repas 1 + D3+K2",
       sub:`légumes crus + fruits + jus Kuvings + 1 goutte D3+K2 · 🥤 ${jusSanteDuJour.nom} (${jusSanteDuJour.compo} — composition résumée, recette complète dans reference-jus-kuvings.md)` + (plaisirWeekend ? ` · 🍹 Alternative plaisir week-end (selon l'envie, remplace le jus santé) : ${plaisirWeekend.nom}` : ""),
       today:true },
@@ -163,8 +229,15 @@ function routinePour(dow) {
     sections.push({ titre:"⚓ Valeur du jour", open:true, items:valueItems });
   }
 
+  // Souper — compléments du soir affichés seulement si en cure
+  const compltsSoir = [];
+  if (enCure("omega3"))      compltsSoir.push("Omega-3");
+  if (enCure("magnesium"))   compltsSoir.push("Mg");
+  if (enCure("ashwagandha")) compltsSoir.push("Ashwagandha");
+  const subSouper = "protéines + légumes cuits + glucides" + (compltsSoir.length ? " + " + compltsSoir.join(" + ") : "");
+
   const soirItems = [
-    { h:"18h00", t:"🍲 Souper", sub:"protéines + légumes cuits + glucides + Omega-3 + Mg + Ashwagandha" },
+    { h:"18h00", t:"🍲 Souper", sub: subSouper },
     { h:"18h10", t:"🚶 Marche post-prandiale", sub:"10 min (si temp. OK)" },
     { h:"19h00", t:"🫖 Tisane", sub:"fenouil/gingembre/cannelle si besoin — digestion (après souper)" },
   ];
@@ -233,6 +306,22 @@ function routinePour(dow) {
       { h:"", type:"alerte", t:"☕ Anxiété, palpitations, insomnie", sub:"réduire caféine et/ou Tyrosine/Rhodiola" },
     ]
   });
+
+  /* ====== CYCLES COMPLÉMENTS (tableau de bord automatique) ====== */
+  // Affiche où en est chaque complément à cycle. Non cochable (info, pas action).
+  const cycleItems = CYCLES.map(c => {
+    const e = etatCycleAujourdhui(c);
+    if(e.etat === "cure"){
+      return { h:"", type:"cycle", t:`${c.nom} — cure jour ${e.jour}/${e.total}`,
+              sub: e.reste===0 ? "dernier jour de cure" : `fin dans ${e.reste} j`,
+              today: e.reste===0 };
+    } else {
+      return { h:"", type:"cycle", t:`${c.nom} — pause jour ${e.jour}/${e.total}`,
+              sub: e.reste===0 ? "reprise demain" : `reprise dans ${e.reste} j`,
+              today: e.reste===0 };
+    }
+  });
+  sections.push({ titre:"💊 Cycles compléments", open:false, items:cycleItems });
 
   /* ====== RECETTES HE (référence) ====== */
   sections.push({
