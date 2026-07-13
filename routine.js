@@ -68,35 +68,43 @@ function valeurDuJour(){
 /* ============================================================
    CYCLES COMPLÉMENTS — automatique passif
    ------------------------------------------------------------
-   Date de début fixe : 1ᵉʳ juillet 2026.
-   Comptage calendaire (pas les cochages).
    Chaque complément alterne cure → pause → cure… indéfiniment.
-   En pause : l'item disparaît du flux de routine.
-   Reprise : il réapparaît automatiquement au bon jour.
+   Comptage calendaire en jours civils (Date.UTC, insensible
+   aux changements d'heure). En pause : l'item disparaît du flux
+   de routine. À la reprise : il réapparaît automatiquement.
+   dateDebut = date d'initialisation de la première cure (par
+   défaut 1ᵉʳ juillet 2026, cf. compte rendu de la mission).
    ============================================================ */
-const DATE_DEBUT_CYCLES = new Date(2026, 6, 1); // 1ᵉʳ juillet 2026 (mois 0-indexé)
-
 const CYCLES = [
-  { id:"omega3",      nom:"Omega 3",             cure:105, pause:21 },
-  { id:"magnesium",   nom:"Magnésium Marin+Vég", cure:42,  pause:14 },
-  { id:"ashwagandha", nom:"Ashwagandha 500 mg",  cure:49,  pause:21 },
-  { id:"spiruline",   nom:"Spiruline Blue Bio",  cure:21,  pause:7  },
-  { id:"tyrosine",    nom:"Tyrosine 500 mg",     cure:35,  pause:21 },
-  { id:"rhodiola",    nom:"Rhodiola Rosea",      cure:25,  pause:10 },
+  { id:"omega3",      nom:"Omega 3",             cure:105, pause:21, dateDebut:"2026-07-01" },
+  { id:"magnesium",   nom:"Magnésium Marin+Vég", cure:42,  pause:14, dateDebut:"2026-07-01" },
+  { id:"ashwagandha", nom:"Ashwagandha 500 mg",  cure:49,  pause:21, dateDebut:"2026-07-01" },
+  { id:"spiruline",   nom:"Spiruline Blue Bio",  cure:21,  pause:7,  dateDebut:"2026-07-01" },
+  { id:"tyrosine",    nom:"Tyrosine 500 mg",     cure:35,  pause:21, dateDebut:"2026-07-01" },
+  { id:"rhodiola",    nom:"Rhodiola Rosea",      cure:25,  pause:10, dateDebut:"2026-07-01" },
 ];
 
+// Nombre de jours civils entre deux dates (insensible aux changements d'heure).
+// Utilise Date.UTC pour comparer des minuits en temps universel.
+function joursCivilsEntre(dateDebutISO, dateFin){
+  const d1 = Date.UTC(dateDebutISO.slice(0,4), dateDebutISO.slice(5,7)-1, dateDebutISO.slice(8,10));
+  const d2 = Date.UTC(dateFin.getFullYear(), dateFin.getMonth(), dateFin.getDate());
+  return Math.floor((d2 - d1) / 86400000);
+}
+
 // Calcule l'état d'un cycle à la date donnée.
-// Retourne { etat, phase, jour, total, reste }
-//   etat : "cure" | "pause"
-//   phase : "debut" (1ʳᵉ moitié) | "fin" (2ᵉ moitié) — pour l'affichage
-//   jour : jour courant dans la phase (1-indexé)
+// Retourne { etat, jour, total, reste }
+//   etat  : "cure" | "pause"
+//   jour  : jour courant dans la phase (1-indexé)
 //   total : durée totale de la phase
-//   reste : jours restants dans la phase
+//   reste : nombre de jours avant la fin de la phase (0 = dernier jour)
+// Le jour de reprise est le lendemain du dernier jour de pause :
+//   pause j1/7 → reste 6 (reprise dans 7 j, car on ne compte pas le jour courant)
+//   pause j7/7 → reste 0 (reprise demain)
+//   Le lendemain → cure j1
 function etatCycle(cycle, date){
-  const unJour = 86400000;
-  // Jour calendaire écoulé depuis le début (0-indexé : jour 0 = 1ᵉʳ juillet)
-  const jour0 = Math.floor((new Date(date.getFullYear(), date.getMonth(), date.getDate()) - DATE_DEBUT_CYCLES) / unJour);
   const cycleTotal = cycle.cure + cycle.pause;
+  const jour0 = joursCivilsEntre(cycle.dateDebut, date);            // 0 = premier jour de cure
   const posCycle = ((jour0 % cycleTotal) + cycleTotal) % cycleTotal; // 0 .. cycleTotal-1
   if(posCycle < cycle.cure){
     const jour = posCycle + 1;
@@ -311,13 +319,15 @@ function routinePour(dow) {
   // Affiche où en est chaque complément à cycle. Non cochable (info, pas action).
   const cycleItems = CYCLES.map(c => {
     const e = etatCycleAujourdhui(c);
+    const jr = e.jour > 1 ? "jours" : "jour";
     if(e.etat === "cure"){
-      return { h:"", type:"cycle", t:`${c.nom} — cure jour ${e.jour}/${e.total}`,
+      return { h:"", type:"cycle", t:`${c.nom} — cure ${e.jour}/${e.total} ${jr}`,
               sub: e.reste===0 ? "dernier jour de cure" : `fin dans ${e.reste} j`,
               today: e.reste===0 };
     } else {
-      return { h:"", type:"cycle", t:`${c.nom} — pause jour ${e.jour}/${e.total}`,
-              sub: e.reste===0 ? "reprise demain" : `reprise dans ${e.reste} j`,
+      const repriseDans = e.reste + 1; // reste n'inclut pas le jour courant
+      return { h:"", type:"cycle", t:`${c.nom} — pause ${e.jour}/${e.total} ${jr}`,
+              sub: e.reste===0 ? "reprise demain" : `reprise dans ${repriseDans} j`,
               today: e.reste===0 };
     }
   });
