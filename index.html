@@ -133,6 +133,14 @@
   .it.recette.done .box{background:var(--rec); border-color:var(--rec); color:#fff}
   .it.recette.done .box::after{color:#fff}
 
+  /* Cycles compléments : info automatique, non cochable */
+  .it.cycle{background:var(--card2)}
+  .it.cycle .box{border-color:var(--mut); background:var(--card2)}
+  .it.cycle .t b{color:var(--mut)}
+  .it.cycle .box::after{content:"◦"; color:var(--mut); font-size:1.1rem}
+  .it.cycle .box{pointer-events:none}
+  .it.cycle{cursor:default}
+
   /* Ligne de clôture */
   .close-row{margin:.9rem .9rem 0; background:linear-gradient(135deg,var(--acc-soft),var(--card2));
     border:1px solid var(--acc); border-radius:14px; overflow:hidden}
@@ -315,8 +323,9 @@ function buildItemHTML(it, idx){
   if(it.today) cls.push("today");
   const h = it.h ? `<span class="h">${it.h}</span>` : "";
   const sub = it.sub ? `<span class="sub">${it.sub}</span>` : "";
-  const icon = it.type==="alerte" ? "" : (it.type==="recette" ? "" : "✓");
-  return `<li class="it ${cls.join(" ")}" data-idx="${idx}">
+  const icon = it.type==="alerte" ? "" : (it.type==="recette" ? "" : (it.type==="cycle" ? "" : "✓"));
+  const dataCycle = it.type==="cycle" ? ' data-cycle="1"' : "";
+  return `<li class="it ${cls.join(" ")}" data-idx="${idx}"${dataCycle}>
     <span class="box">${icon}</span>
     <span class="t">${h}<b>${it.t}</b>${sub}</span>
   </li>`;
@@ -390,6 +399,7 @@ function render(){
 
 function onItemClick(el){
   if(el.classList.contains("removing")) return;
+  if(el.dataset.cycle==="1") return; // items cycle : info non cochable
   const idx = el.dataset.idx;
   const close = el.dataset.close==="1";
   const done = loadDone();
@@ -425,8 +435,8 @@ function updateCounts(){
 }
 
 function updateProg(){
-  const all = document.querySelectorAll(".it:not([data-close]):not(.alerte):not(.recette):not(.acu):not(.lien):not(.croy)");
-  const doneN = document.querySelectorAll(".it.done:not([data-close]):not(.alerte):not(.recette):not(.acu):not(.lien):not(.croy)");
+  const all = document.querySelectorAll(".it:not([data-close]):not(.alerte):not(.recette):not(.acu):not(.lien):not(.croy):not(.cycle)");
+  const doneN = document.querySelectorAll(".it.done:not([data-close]):not(.alerte):not(.recette):not(.acu):not(.lien):not(.croy):not(.cycle)");
   const total = all.length;
   const pct = total?Math.round(doneN.length/total*100):0;
   document.getElementById("prog").textContent = doneN.length+"/"+total;
