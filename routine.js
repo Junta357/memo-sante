@@ -368,7 +368,7 @@ function routinePour(dow) {
 
 /* Échéances à venir (affichées dans l'app) */
 const ECHEANCES = [
-  { date:"Déc. 2026", t:"Prise de sang complète (Dr Collin Rasson) — cible LDL 100 mg/dL + PSA (prostate)" },
+  { date:"Déc. 2026", t:"Prise de sang complète (Dr Colin Rasson) — cible LDL 100 mg/dL + PSA (prostate)" },
   { date:"Fin 2026", t:"Bilan ophtalmo (pression intra-oculaire, fond d'œil, accommodation)" },
   { date:"Annuel", t:"Dermatologue (grains de beauté bras gauche)" },
 ];
