@@ -174,8 +174,17 @@ function routinePour(dow) {
     { h:"06h35", t:"👁️ Yoga des yeux", sub:"5 clignements conscients.", today:true },
     { h:"06h35", t:"🕷️ Araignée crânienne", sub:"30 s–1 min.", today:true },
     { h:"06h40", t:"💪 Stomach vacuum", sub:"2 min, 2–3 reps" },
-    { h:"06h45", t:"☕ Café 1", sub:"noir bio" },
   ];
+  // 06h30 / 06h40 — adaptogène au réveil, à jeun (avant café, ~30 min avant la course).
+  // Rotation hebdo Tyrosine/Rhodiola, MAIS seulement si le complément est en cure.
+  // Si l'adaptogène du jour est en pause de cycle → aucun adaptogène affiché (sauté).
+  let adaptoNom = null, adaptoEnCure = true;
+  if (rhodiola) { adaptoNom = "Rhodiola"; adaptoEnCure = enCure("rhodiola"); }
+  else if (tyrosine) { adaptoNom = "Tyrosine"; adaptoEnCure = enCure("tyrosine"); }
+  if (adaptoNom && adaptoEnCure) {
+    matin.push({ h:"06h40", t:`💊 ${adaptoNom} (rotation)`, sub:"À jeun, au réveil — 30 min avant le café. Favorise l'absorption.", today:true });
+  }
+  matin.push({ h:"06h45", t:"☕ Café 1", sub:"noir bio" });
   // 06h50 — aromathérapie conditionnelle : stick les jours de course, diffusion les autres
   if (jourCourse) {
     matin.push({ h:"06h50", type:"he", t:"🌿 Stick « Départ / Focalisation »", sub:"Stick 1 Romarin — 1 inspiration/narine, juste avant de partir. Remplace la diffusion du matin.", today:true });
@@ -191,18 +200,11 @@ function routinePour(dow) {
   } else {
     matin.push({ h:"07h00", t:"🚶 Repos actif", sub:"marche, vélo, mobilité", today:false });
   }
-  // 09h00 — bloc cohérent : encas + complément du jour + thé vert
-  // Adaptogène conditionnel : rotation hebdo Tyrosine/Rhodiola, MAIS seulement si le complément est en cure.
-  // Si l'adaptogène du jour est en pause de cycle → aucun adaptogène affiché (juste encas + thé vert).
-  let adaptoNom = null, adaptoEnCure = true;
-  if (rhodiola) { adaptoNom = "Rhodiola"; adaptoEnCure = enCure("rhodiola"); }
-  else if (tyrosine) { adaptoNom = "Tyrosine"; adaptoEnCure = enCure("tyrosine"); }
-  const prefix = adaptoNom && adaptoEnCure ? `💊 ${adaptoNom} + ` : "";
-  const adaptoSub = adaptoNom && adaptoEnCure ? ` + ${adaptoNom} (rotation)` : (adaptoNom ? ` + ${adaptoNom} en pause de cycle` : "");
+  // 09h00 — encas post-course (sans adaptogène : il est pris au réveil à 6h40)
   matin.push({
     h:"09h00",
-    t: prefix + "🍊 Encas + 🍵 Thé vert",
-    sub: "1 orange bio + fromage d'abbaye" + adaptoSub + " + 1 tasse de thé vert",
+    t:"🍊 Encas + 🍵 Thé vert",
+    sub: "1 orange bio + fromage d'abbaye + 1 tasse de thé vert",
     today: true
   });
   sections.push({ titre:"🌅 Matin", open:true, items:matin });
@@ -273,7 +275,7 @@ function routinePour(dow) {
     soirItems.push({ h:"21h45", t:"🧘 Yoga Yin", sub:"30 min (vendredi soir) — 8 postures débutant, sans matériel. Détail dans reference-yoga-yin.md", today:true });
   }
   soirItems.push({ h:"22h15", type:"he", t:"💆 Massage Apaisement signature", sub:"Camomille noble 6 + Lavande 3 gt / amande 30 ml — plexus, trapèzes, côtés+arrière du cou. Massage lent.", today:true });
-  soirItems.push({ h:"22h30", t:"🌙 Coucher", sub:"Jeûne nocturne : du dernier apport après le souper jusqu'à l'encas de 9h (~14-15 h)." });
+  soirItems.push({ h:"22h30", t:"🌙 Coucher", sub:"Fenêtre de jeûne : du souper (18h) jusqu'à l'adaptogène du réveil (6h40) — ~12-13 h." });
   sections.push({ titre:"🌆 Soir", open:true, items:soirItems });
 
   /* ====== HYDRATATION ====== */
