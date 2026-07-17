@@ -129,8 +129,8 @@ function enCure(id){
 
 function routinePour(dow) {
   // --- Conditions du jour ---
-  const rhodiola = dow===3 || dow===6;         // mer, sam
-  const tyrosine = [0,1,2,4,5].includes(dow);  // dim,lun,mar,jeu,ven
+  const rhodiola = [0,1,2,4,5].includes(dow);  // dim,lun,mar,jeu,ven (principal — ressenti + efficace)
+  const tyrosine = dow===3 || dow===6;          // mer, sam (phase-out : finir la boîte, puis retrait)
   const jourCourse = dow===1 || dow===3 || dow===5;  // lun, mer, ven
   const sardines = dow===2 || dow===6;         // mar,sam
   const yogaYin = dow===5;                     // ven
@@ -218,7 +218,7 @@ function routinePour(dow) {
   }
   jourItems.push(
     { h:"14h00", t:"🥗 Repas 1 + D3+K2",
-      sub:`légumes crus + fruits + jus Kuvings + 1 goutte D3+K2 · 🥤 ${jusSanteDuJour.nom} (${jusSanteDuJour.compo} — composition résumée, recette complète dans reference-jus-kuvings.md)` + (plaisirWeekend ? ` · 🍹 Alternative plaisir week-end (selon l'envie, remplace le jus santé) : ${plaisirWeekend.nom}` : ""),
+      sub:`légumes crus + fruits + jus Kuvings + 1 goutte D3+K2 · 🥤 ${jusSanteDuJour.nom} (${jusSanteDuJour.compo} — composition résumée, recette complète dans la section Jus Kuvings ci-dessous)` + (plaisirWeekend ? ` · 🍹 Alternative plaisir week-end (selon l'envie, remplace le jus santé) : ${plaisirWeekend.nom}` : ""),
       today:true },
     { h:"14h15", t:"🍵 Matcha", sub:"1 c. à café (~2 g), eau 80 °C" },
     { h:"16h00", t:"🍫 Chocolat noir 85 %", sub:"20–30 g bio · DERNIÈRE caféine" }
@@ -247,7 +247,7 @@ function routinePour(dow) {
 
   const soirItems = [
     { h:"18h00", t:"🍲 Souper", sub: subSouper },
-    { h:"18h10", t:"🚶 Marche post-prandiale", sub:"10 min (si temp. OK)" },
+    { h:"18h10", t:"🚶 Marche post-prandiale", sub:"5-10 min (progression : +1 min/sem, si temp. OK)" },
     { h:"19h00", t:"🫖 Tisane", sub:"fenouil/gingembre/cannelle si besoin — digestion (après souper)" },
   ];
   if (bainPiedsRelax) {
