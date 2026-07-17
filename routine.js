@@ -172,7 +172,6 @@ function routinePour(dow) {
   const matin = [
     { h:"06h30", t:"Réveil", sub:"simulateur d'aube" },
     { h:"06h35", t:"👁️ Yoga des yeux", sub:"5 clignements conscients.", today:true },
-    { h:"06h35", t:"🕷️ Araignée crânienne", sub:"30 s–1 min.", today:true },
     { h:"06h40", t:"💪 Stomach vacuum", sub:"2 min, 2–3 reps" },
   ];
   // 06h30 / 06h40 — adaptogène au réveil, à jeun (avant café, ~30 min avant la course).
@@ -272,7 +271,7 @@ function routinePour(dow) {
     soirItems.push({ h:"21h15", t:"👁️ Yoga des yeux", sub:"exercice de l'index seul — palming remplacé par le Yoga Yin", today:true });
   }
   if (yogaYin) {
-    soirItems.push({ h:"21h45", t:"🧘 Yoga Yin", sub:"30 min (vendredi soir) — 8 postures débutant, sans matériel. Détail dans reference-yoga-yin.md", today:true });
+    soirItems.push({ h:"21h45", t:"🧘 Yoga Yin", sub:"30 min (vendredi soir) — 8 postures débutant, sans matériel. Détail dans la section Yin Yoga ci-dessous.", today:true });
   }
   soirItems.push({ h:"22h15", type:"he", t:"💆 Massage Apaisement signature", sub:"Camomille noble 6 + Lavande 3 gt / amande 30 ml — plexus, trapèzes, côtés+arrière du cou. Massage lent.", today:true });
   soirItems.push({ h:"22h30", t:"🌙 Coucher", sub:"Fenêtre de jeûne : du souper (18h) jusqu'à l'adaptogène du réveil (6h40) — ~12-13 h." });
@@ -351,6 +350,41 @@ function routinePour(dow) {
       { h:"", type:"recette", t:"Diffusion soir", sub:"Orange 2 + Lavande 2 + Cèdre 1 — 1h max, fenêtre ouverte. Remplacée par bain de pieds les soirs de bain." },
       { h:"", type:"recette", t:"Bain de pieds relaxation (mer/dim)", sub:"Lavande 2 + Camomille noble 1 + Néroli 1 (4 gt) / 1 bouchon Base Neutre → eau. Jamais d'HE directe. Sel Epsom séparé." },
       { h:"", type:"recette", t:"Bain de pieds sportif (au ressenti)", sub:"Pin 2 + Gingembre 1 + Lavande 1 (4 gt) / 1 bouchon Base Neutre → eau + sel Epsom séparé. 1-2×/sem max." },
+    ]
+  });
+
+  /* ====== RECETTES JUS KUVINGS (référence intégrée) ====== */
+  sections.push({
+    titre: "🥤 Recettes jus Kuvings (référence)",
+    open: false,
+    items: [
+      { h:"", type:"recette", t:"Jus A — Vert épicé (santé)", sub:"6-8 branches céleri + ½ concombre + 1 carotte + 1 kiwi + 1 orange + ~1 cm gingembre + ~1 cm curcuma frais. Base végétale dominante. Note : kiwi + orange conservés ensemble volontairement." },
+      { h:"", type:"recette", t:"Jus B — Vasculaire nitrates (santé)", sub:"½ poivron rouge + 1 tranche pastèque + ¼ concombre + 1 c. à s. menthe fraîche + ¼ betterave + thym. Variante hiver : pastèque → ¼ courgette crue + ½ concombre supp." },
+      { h:"", type:"recette", t:"Jus C — Rouge tomate (santé)", sub:"450 g tomates mûres + 2 branches céleri + ¼ fenouil + ¼ à ½ concombre + après extraction : 1 c. à c. huile d'olive vierge extra (caroténoïdes liposolubles) + pincée origan." },
+      { h:"", type:"recette", t:"Jus D — Bleu-violet (santé)", sub:"125 g myrtilles surgelées décongelées + 1 carotte + ½ concombre + ½ orange. Anthocyanines." },
+      { h:"", type:"recette", t:"P1 — Tropical solaire (plaisir)", sub:"125 g mangue surgelée + 125 g ananas surgelé + 1 orange + ½ pomme + ~0,5 cm gingembre (facultatif)." },
+      { h:"", type:"recette", t:"P2 — Grenade royale (plaisir)", sub:"Graines d'1 grenade + 1 orange + ½ pomme + quelques feuilles menthe fraîche." },
+      { h:"", type:"recette", t:"Règle hebdo", sub:"4 jus santé A/B/C/D en rotation (chacun ≥ 1×/sem) + 1 jus plaisir prévu + 1 joker plaisir selon l'envie. Une journée peut aussi être sans jus. Diversité > perfection." },
+      { h:"", type:"recette", t:"⚠️ Précautions", sub:"Rein sensible : pas de restriction oxalates systématique mais modérer betterave/épinards/persil. Pamplemousse : interactions médicamenteuses → Dr Colin Rasson si traitement. Après préparation : laver mains si agrumes/céleri avant soleil (phytophotodermatite — concerne le contact cutané, pas l'ingestion)." },
+    ]
+  });
+
+  /* ====== YIN YOGA — 8 POSTURES (référence intégrée, vendredi soir) ====== */
+  sections.push({
+    titre: "🧘 Yin Yoga — 8 postures (référence)",
+    open: false,
+    items: [
+      { h:"", type:"recette", t:"Minutage total : 30 min", sub:"Installation 2 min · 8 postures 25 min · Clôture 3 min. Substituts maison : coussin canapé (bolster), serviette pliée (bloc), ceinture de bain (sangle), parquet + grande serviette (tapis)." },
+      { h:"", type:"recette", t:"Posture 0 — Installation (2 min)", sub:"Diffusion soirée (Orange 2 + Lavande 2 + Cèdre 1). Assis en tailleur, 3 respirations ventrales lentes 5-5. Intention : rien à accomplir, juste habiter son corps." },
+      { h:"", type:"recette", t:"1 — Papillon (5 min)", sub:"Pieds collés, genoux en losange, coussin sous bassin. Penche en avant dos arrondi, laisse la gravité. Adaptation aine : éloigner pieds (V large) ou rester droit. Si douleur > 3/10 → sauter." },
+      { h:"", type:"recette", t:"2 — Chenille (4 min)", sub:"Jambes tendues légèrement écartées, coussin sous genoux si ischios raides. Penche en avant dos arrondi, lâche la tête. Cible colonne + nuque." },
+      { h:"", type:"recette", t:"3 — Libération cervicales (2 min)", sub:"1 min/côté. Main D sur tête au-dessus oreille G, attire doucement vers épaule D. Épaule G relâchée vers le bas. Contre posture écran." },
+      { h:"", type:"recette", t:"4 — Dragon volant (4 min)", sub:"2 min/côté. Grand pas avant (pied D devant, genou G au sol sur coussin). Main D sur cuisse D pousse hanche avant. Bras G levé, étirement latéral psoas. Étire le muscle du stress." },
+      { h:"", type:"recette", t:"5 — Coquillage (3 min)", sub:"À genoux assis sur talons (coussin si inconfort). Croise les bras, front au sol/coussin, bras tendus loin devant. Respiration entre les omoplates. Ouvre poitrine voûtée." },
+      { h:"", type:"recette", t:"6 — Twist vertébral (3 min)", sub:"1,5 min/côté. Allongé dos, bras en croix. Genou D plié amené vers sol à gauche, regard à droite. Coussin sous genou s'il ne touche pas. Aide motilité intestinale." },
+      { h:"", type:"recette", t:"7 — Pieds au mur (3 min)", sub:"Assis dos au mur, allonge-toi, jambes le long du mur. Bassin proche (ou éloigné si ischios raides). Bras en croix paumes vers haut. Retour veineux + parasympathique." },
+      { h:"", type:"recette", t:"8 — Savasana (3 min)", sub:"Allongé dos, jambes écartées, bras le long du corps paumes vers haut. Coussin sous genoux. Lâche tout. Sortie : roule sur côté droit 30 s puis redresse-toi doucement." },
+      { h:"", type:"recette", t:"⚠️ Garde-fous", sub:"Sensation d'étirement → OK tiens. Douleur aiguë qui monte → sors. Genou D (signe neuro) : coussin systématique en postures à genoux, jamais forcer en torsion. Fatigue extrême → Savasana seul." },
     ]
   });
 
