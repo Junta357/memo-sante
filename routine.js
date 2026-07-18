@@ -218,7 +218,7 @@ function routinePour(dow) {
   }
   jourItems.push(
     { h:"14h00", t:"🥗 Repas 1 + D3+K2",
-      sub:`légumes crus + fruits + jus Kuvings + 1 goutte D3+K2 · 🥤 ${jusSanteDuJour.nom} (${jusSanteDuJour.compo} — composition résumée, recette complète dans la section Jus Kuvings ci-dessous)` + (plaisirWeekend ? ` · 🍹 Alternative plaisir week-end (selon l'envie, remplace le jus santé) : ${plaisirWeekend.nom}` : ""),
+      sub:"légumes crus + fruits + jus Kuvings + 1 goutte D3+K2 · 🥤 Recette complète dans la section Jus Kuvings ci-dessous",
       today:true },
     { h:"14h15", t:"🍵 Matcha", sub:"1 c. à café (~2 g), eau 80 °C" },
     { h:"16h00", t:"🍫 Chocolat noir 85 %", sub:"20–30 g bio · DERNIÈRE caféine" }
