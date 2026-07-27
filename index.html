@@ -42,10 +42,19 @@
     --safe:env(safe-area-inset-top,0px);
   }
   *{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
-  html,body{margin:0; padding:0; background:var(--bg); overscroll-behavior-y:none}
+  html,body{margin:0; padding:0; width:100%; height:100%; background:var(--bg); overflow:hidden}
   body{font-family:-apple-system,"Segoe UI",Roboto,system-ui,sans-serif; color:var(--txt);
-    font-size:16px; line-height:1.5; padding:calc(.6rem + var(--safe)) .75rem 6rem;
-    max-width:640px; margin-inline:auto; -webkit-font-smoothing:antialiased}
+    font-size:16px; line-height:1.5; max-width:640px; margin-inline:auto;
+    -webkit-font-smoothing:antialiased}
+
+  /* Deux écrans horizontaux, chacun conservant son propre défilement vertical */
+  .page-viewport{display:flex; width:100%; height:100dvh; overflow-x:auto; overflow-y:hidden;
+    scroll-snap-type:x mandatory; scroll-behavior:smooth; overscroll-behavior-x:contain;
+    scrollbar-width:none}
+  .page-viewport::-webkit-scrollbar{display:none}
+  .page-screen{flex:0 0 100%; width:100%; height:100dvh; overflow-y:auto;
+    overscroll-behavior-y:contain; scroll-snap-align:start; scroll-snap-stop:always;
+    padding:calc(.6rem + var(--safe)) .75rem 6rem}
 
   /* Bandeau supérieur */
   header{position:sticky; top:0; z-index:10; background:var(--bg); margin:0 -.75rem;
@@ -55,9 +64,15 @@
   header .logo{width:32px; height:32px; border-radius:9px; object-fit:cover}
   header h1{font-size:1.04rem; margin:0; font-weight:800; letter-spacing:.01em; color:var(--acc2)}
   header .day{font-size:.76rem; color:var(--mut); margin-top:.05rem; text-transform:capitalize}
+  .header-side{text-align:right; min-width:5rem}
   #prog{font-size:.72rem; color:var(--mut); text-align:right; min-width:4.5rem; font-variant-numeric:tabular-nums}
   .bar{height:6px; background:var(--card2); border-radius:4px; overflow:hidden; margin-top:.3rem; width:5rem}
   .bar i{display:block; height:100%; width:0; background:linear-gradient(90deg,var(--acc),var(--acc2)); transition:width .3s}
+  .page-dots{display:flex; justify-content:flex-end; gap:.35rem; margin-top:.38rem}
+  .page-dot{width:9px; height:9px; padding:0; border:1px solid var(--mut); border-radius:50%;
+    background:transparent; cursor:pointer}
+  .page-dot.active{background:var(--acc); border-color:var(--acc)}
+  .horizon-tag{font-size:.7rem; color:var(--mut); white-space:nowrap}
 
   /* Sections */
   .sec{margin:.7rem 0 0; background:var(--card); border:1px solid var(--line); border-radius:14px; overflow:hidden;
@@ -87,6 +102,25 @@
   .it.done .box{background:var(--acc); border-color:var(--acc); color:#fff}
   .it.today .box{border-color:var(--acc); background:var(--acc-soft)}
   .it.removing{opacity:0; transform:translateX(20px); max-height:0; padding-top:0; padding-bottom:0; margin:0; border-top-color:transparent}
+
+  /* Possibilités de l'Horizon : sélection douce, jamais un état d'obligation */
+  .horizon-it{max-height:none; align-items:center}
+  .horizon-it .box{color:var(--mut); font-size:.85rem}
+  .horizon-it.chosen{background:var(--acc-soft)}
+  .horizon-it.chosen .box{background:var(--acc); border-color:var(--acc); color:#241d17}
+  .horizon-it.chosen .t b{color:var(--acc2)}
+  .edit-activity{flex:0 0 auto; width:34px; height:34px; border:1px solid var(--line);
+    border-radius:9px; background:var(--card2); color:var(--mut); font-size:.9rem; cursor:pointer}
+  .edit-activity:active{background:var(--acc-soft); color:var(--acc2)}
+  .calendar-empty,.horizon-empty{padding:1rem; color:var(--mut); font-size:.82rem}
+  .calendar-empty b{color:var(--txt)}
+  .dated-it{max-height:none; align-items:center; cursor:default}
+  .dated-it .box{border-color:var(--acc); color:var(--acc2)}
+  .dated-it .t b{color:var(--acc2)}
+  .calendar-note{padding:.8rem 1rem 1rem; border-top:1px solid var(--line);
+    color:var(--mut); font-size:.76rem}
+  .calendar-note b{color:var(--txt)}
+  .calendar-note .manager-button{display:block; width:100%; margin-top:.7rem}
 
   /* Types : HE (sauge), alerte (terracotta), recette (bronze) */
   .it.he{background:var(--he-bg)}
@@ -166,12 +200,64 @@
 
   /* Barre bas */
   .bot{position:fixed; bottom:0; left:0; right:0; background:var(--bg); border-top:1px solid var(--line);
-    padding:.55rem 1rem calc(.55rem + env(safe-area-inset-bottom,0px)); display:flex; gap:.6rem;
+    padding:.55rem 1rem calc(.55rem + env(safe-area-inset-bottom,0px));
     max-width:640px; margin-inline:auto}
+  .bot-actions{display:flex; width:100%; gap:.6rem}
+  .bot-actions[hidden]{display:none}
   .bot button{flex:1; padding:.78rem .4rem; border:1px solid var(--line); border-radius:10px; background:var(--card);
     color:var(--txt); font-size:.8rem; font-weight:700; cursor:pointer; min-width:0}
   .bot button:active{background:var(--card2)}
   .bot button:disabled{opacity:.6; cursor:default}
+
+  /* Fenêtres de gestion — même vocabulaire visuel que les cartes */
+  dialog{width:min(92vw,560px); max-height:88dvh; padding:0; border:1px solid var(--line);
+    border-radius:14px; background:var(--card); color:var(--txt); box-shadow:0 16px 50px rgba(0,0,0,.45)}
+  dialog::backdrop{background:rgba(20,14,10,.72)}
+  .dialog-head{position:sticky; top:0; z-index:2; display:flex; align-items:center;
+    justify-content:space-between; gap:.8rem; padding:.9rem 1rem; background:var(--card);
+    border-bottom:1px solid var(--line)}
+  .dialog-head h2{margin:0; font-size:1rem; color:var(--acc2)}
+  .dialog-close{width:34px; height:34px; border:1px solid var(--line); border-radius:9px;
+    background:var(--card2); color:var(--txt); font-size:1.1rem; cursor:pointer}
+  .dialog-body{padding:1rem; overflow-y:auto}
+  .field{display:block; margin:0 0 .9rem; color:var(--mut); font-size:.76rem; font-weight:700}
+  .field input,.field select,.category-add input{display:block; width:100%; margin-top:.35rem;
+    padding:.72rem .75rem; border:1px solid var(--line); border-radius:10px;
+    background:var(--bg); color:var(--txt); font:inherit}
+  fieldset{margin:0 0 .9rem; padding:.75rem; border:1px solid var(--line); border-radius:10px}
+  legend{padding:0 .35rem; color:var(--mut); font-size:.76rem; font-weight:700}
+  .schedule-choice{display:flex; align-items:center; gap:.55rem; padding:.38rem 0; font-size:.86rem}
+  .schedule-choice input{accent-color:var(--acc)}
+  .weekday-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:.4rem; margin:.45rem 0 .2rem}
+  .weekday-grid[hidden],.date-field[hidden]{display:none}
+  .weekday-grid label{display:flex; justify-content:center; gap:.3rem; padding:.5rem .2rem;
+    border:1px solid var(--line); border-radius:8px; background:var(--bg); font-size:.74rem}
+  .weekday-grid input{accent-color:var(--acc)}
+  .date-field{margin-top:.45rem}
+  .schedule-help{display:block; margin-top:.45rem; color:var(--mut); font-size:.72rem; font-weight:400}
+  .dialog-actions{display:flex; gap:.6rem; margin-top:1rem}
+  .dialog-actions button,.manager-button,.category-add button{flex:1; padding:.7rem;
+    border:1px solid var(--line); border-radius:10px; background:var(--card2);
+    color:var(--txt); font-weight:700; cursor:pointer}
+  .dialog-actions .primary,.manager-button.primary,.category-add button{background:var(--acc);
+    border-color:var(--acc); color:#241d17}
+  .manager-list{display:grid; gap:.75rem}
+  .manager-group{border:1px solid var(--line); border-radius:12px; overflow:hidden}
+  .manager-group h3{margin:0; padding:.7rem .85rem; background:var(--card2);
+    font-size:.84rem; color:var(--txt)}
+  .manager-row{display:flex; align-items:center; justify-content:space-between; gap:.65rem;
+    width:100%; padding:.72rem .85rem; border:0; border-top:1px solid var(--line);
+    background:var(--card); color:var(--txt); text-align:left; cursor:pointer}
+  .manager-row:first-of-type{border-top:0}
+  .manager-row span{display:block; font-size:.84rem; font-weight:700}
+  .manager-row small{display:block; margin-top:.1rem; color:var(--mut); font-size:.7rem}
+  .manager-row i{font-style:normal; color:var(--mut)}
+  .category-add{display:flex; align-items:flex-end; gap:.6rem; margin-bottom:1rem}
+  .category-add .field{flex:1; margin:0}
+  .category-add button{flex:0 0 auto}
+  .manager-footer{display:flex; flex-wrap:wrap; gap:.6rem; margin-top:1rem}
+  .manager-footer .manager-button{min-width:9rem}
+  .form-error{min-height:1.2rem; margin:.25rem 0 0; color:var(--alert); font-size:.76rem}
 
   /* Bannière install */
   .install-banner{display:none; margin:.7rem 0 0; padding:.8rem 1rem; background:var(--acc-soft);
@@ -183,40 +269,196 @@
 </head>
 <body>
 
-<header>
-  <div class="ttl">
-    <img class="logo" src="./icons/icon-192-v2.png" alt="">
-    <div>
-      <h1>Mémo Santé</h1>
-      <div class="day" id="hd-day">—</div>
-      <div id="sync-status" style="font-size:.66rem;color:var(--mut);margin-top:.05rem">⟳ Sync…</div>
+<main id="page-viewport" class="page-viewport" aria-label="Écrans de Mémo Santé">
+  <section id="routine-page" class="page-screen" aria-label="Ma routine">
+    <header>
+      <div class="ttl">
+        <img class="logo" src="./icons/icon-192-v2.png" alt="">
+        <div>
+          <h1>Mémo Santé</h1>
+          <div class="day" id="hd-day">—</div>
+          <div id="sync-status" style="font-size:.66rem;color:var(--mut);margin-top:.05rem">⟳ Sync…</div>
+        </div>
+      </div>
+      <div class="header-side">
+        <div id="prog">0/0</div>
+        <div class="bar"><i id="bar"></i></div>
+        <nav class="page-dots" aria-label="Changer d’écran">
+          <button class="page-dot active" type="button" data-page="0" aria-label="Ma routine"></button>
+          <button class="page-dot" type="button" data-page="1" aria-label="Horizon du jour"></button>
+        </nav>
+      </div>
+    </header>
+
+    <div id="install-banner" class="install-banner">
+      <b>📌 Installe l'appli</b> pour l'avoir en icône sur ton bureau (menu Chrome ⋮ → <i>Installer l'application</i>).
+      <button id="btn-install">Installer maintenant</button>
     </div>
-  </div>
-  <div>
-    <div id="prog">0/0</div>
-    <div class="bar"><i id="bar"></i></div>
-  </div>
-</header>
 
-<div id="install-banner" class="install-banner">
-  <b>📌 Installe l'appli</b> pour l'avoir en icône sur ton bureau (menu Chrome ⋮ → <i>Installer l'application</i>).
-  <button id="btn-install">Installer maintenant</button>
-</div>
+    <div id="app"></div>
 
-<main id="app"></main>
+    <div id="done-screen">
+      <div class="big">🌙</div>
+      <h2>Journée clôturée</h2>
+      <p id="done-msg">Bien joué. Repose-toi.</p>
+      <div class="next">À demain<br><b id="next-date">—</b></div>
+    </div>
+  </section>
 
-<div id="done-screen">
-  <div class="big">🌙</div>
-  <h2>Journée clôturée</h2>
-  <p id="done-msg">Bien joué. Repose-toi.</p>
-  <div class="next">À demain<br><b id="next-date">—</b></div>
-</div>
+  <section id="horizon-page" class="page-screen" aria-label="Horizon du jour">
+    <header>
+      <div class="ttl">
+        <img class="logo" src="./icons/icon-192-v2.png" alt="">
+        <div>
+          <h1>Horizon du jour</h1>
+          <div class="day" id="horizon-day">—</div>
+          <div class="horizon-tag">Choisir librement</div>
+        </div>
+      </div>
+      <div class="header-side">
+        <div class="horizon-tag">Mes possibilités</div>
+        <nav class="page-dots" aria-label="Changer d’écran">
+          <button class="page-dot" type="button" data-page="0" aria-label="Ma routine"></button>
+          <button class="page-dot active" type="button" data-page="1" aria-label="Horizon du jour"></button>
+        </nav>
+      </div>
+    </header>
+
+    <details id="calendar-section" class="sec" open>
+      <summary>📅 Déjà prévu aujourd’hui<span class="chev">▶</span></summary>
+      <div id="dated-items-today"></div>
+      <div class="calendar-note">
+        <b>Google Agenda sera relié en lecture seule lors d’une prochaine étape.</b><br>
+        Aucun événement n’est simulé dans cette version.
+        <button id="add-dated-item-inline" class="manager-button" type="button">＋ Ajouter un élément daté</button>
+      </div>
+    </details>
+
+    <div id="horizon-sections"></div>
+  </section>
+</main>
 
 <div class="bot">
-  <button onclick="forceUpdate()" title="Récupère la dernière version (garde tes cochages)">🔄 MAJ</button>
-  <button onclick="resetDay()" title="Efface les cochages du jour">↻ Jour</button>
-  <button class="pri" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑ Haut</button>
+  <div id="routine-actions" class="bot-actions">
+    <button onclick="forceUpdate(this)" title="Récupère la dernière version (garde tes cochages)">🔄 MAJ</button>
+    <button onclick="resetDay()" title="Efface les cochages du jour">↻ Jour</button>
+    <button class="pri" onclick="scrollActiveToTop()">↑ Haut</button>
+  </div>
+  <div id="horizon-actions" class="bot-actions" hidden>
+    <button onclick="openActivityEditor()">＋ Activité</button>
+    <button onclick="openActivityManager()">✎ Gérer</button>
+    <button class="pri" onclick="scrollActiveToTop()">↑ Haut</button>
+  </div>
 </div>
+
+<dialog id="manager-dialog">
+  <div class="dialog-head">
+    <h2>Mes activités</h2>
+    <button class="dialog-close" type="button" data-close-dialog="manager-dialog" aria-label="Fermer">×</button>
+  </div>
+  <div class="dialog-body">
+    <div class="category-add">
+      <label class="field" for="new-category-name">
+        Nouvelle catégorie
+        <input id="new-category-name" type="text" maxlength="60" placeholder="Nom de la catégorie">
+      </label>
+      <button id="add-category-button" type="button">Ajouter</button>
+    </div>
+    <div id="manager-list" class="manager-list"></div>
+    <div class="manager-footer">
+      <button class="manager-button primary" type="button" id="manager-add-activity">＋ Nouvelle activité</button>
+      <button class="manager-button" type="button" id="manager-add-dated-item">＋ Élément daté</button>
+      <button class="manager-button" type="button" data-close-dialog="manager-dialog">Fermer</button>
+    </div>
+  </div>
+</dialog>
+
+<dialog id="activity-dialog">
+  <div class="dialog-head">
+    <h2 id="activity-dialog-title">Ajouter une activité</h2>
+    <button class="dialog-close" type="button" data-close-dialog="activity-dialog" aria-label="Fermer">×</button>
+  </div>
+  <form id="activity-form" class="dialog-body">
+    <input id="activity-id" type="hidden">
+    <label class="field" for="activity-title">
+      Activité
+      <input id="activity-title" type="text" maxlength="100" required placeholder="Ex. Dessiner un dragon">
+    </label>
+    <label class="field" for="activity-note">
+      Précision facultative
+      <input id="activity-note" type="text" maxlength="140" placeholder="Un repère utile, sans obligation">
+    </label>
+    <label class="field" for="activity-category">
+      Catégorie
+      <select id="activity-category" required></select>
+    </label>
+
+    <fieldset>
+      <legend>Quand cette possibilité peut-elle apparaître ?</legend>
+      <label class="schedule-choice">
+        <input type="radio" name="schedule-mode" value="any" checked>
+        Tous les jours
+      </label>
+      <label class="schedule-choice">
+        <input type="radio" name="schedule-mode" value="weekdays">
+        Certains jours de la semaine
+      </label>
+      <div id="weekday-fields" class="weekday-grid" hidden>
+        <label><input type="checkbox" name="weekday" value="1">Lun</label>
+        <label><input type="checkbox" name="weekday" value="2">Mar</label>
+        <label><input type="checkbox" name="weekday" value="3">Mer</label>
+        <label><input type="checkbox" name="weekday" value="4">Jeu</label>
+        <label><input type="checkbox" name="weekday" value="5">Ven</label>
+        <label><input type="checkbox" name="weekday" value="6">Sam</label>
+        <label><input type="checkbox" name="weekday" value="0">Dim</label>
+      </div>
+      <label class="schedule-choice">
+        <input type="radio" name="schedule-mode" value="date">
+        Mettre en avant à une date
+      </label>
+      <label id="date-field" class="field date-field" for="activity-date" hidden>
+        Date proposée
+        <input id="activity-date" type="date">
+        <span class="schedule-help">Après cette date, l’activité redevient une possibilité permanente.</span>
+      </label>
+    </fieldset>
+
+    <div id="activity-form-error" class="form-error" role="alert"></div>
+    <div class="dialog-actions">
+      <button type="button" data-close-dialog="activity-dialog">Annuler</button>
+      <button class="primary" type="submit">Enregistrer</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="dated-item-dialog">
+  <div class="dialog-head">
+    <h2 id="dated-item-dialog-title">Ajouter un élément daté</h2>
+    <button class="dialog-close" type="button" data-close-dialog="dated-item-dialog" aria-label="Fermer">×</button>
+  </div>
+  <form id="dated-item-form" class="dialog-body">
+    <input id="dated-item-id" type="hidden">
+    <label class="field" for="dated-item-title">
+      Élément unique
+      <input id="dated-item-title" type="text" maxlength="100" required placeholder="Ex. Cinéma avec Damien">
+    </label>
+    <label class="field" for="dated-item-note">
+      Précision facultative
+      <input id="dated-item-note" type="text" maxlength="140" placeholder="Un lieu ou un repère utile">
+    </label>
+    <label class="field" for="dated-item-date">
+      Date
+      <input id="dated-item-date" type="date" required>
+    </label>
+    <span class="schedule-help">Cet élément apparaît uniquement le jour prévu, puis disparaît. Google Agenda restera en lecture seule.</span>
+    <div id="dated-item-form-error" class="form-error" role="alert"></div>
+    <div class="dialog-actions">
+      <button id="delete-dated-item" type="button" hidden>Supprimer</button>
+      <button type="button" data-close-dialog="dated-item-dialog">Annuler</button>
+      <button class="primary" type="submit">Enregistrer</button>
+    </div>
+  </form>
+</dialog>
 
 <script src="./routine.js"></script>
 <script type="module" src="./firebase.js"></script>
@@ -240,6 +482,145 @@ function loadDone(){ try{return JSON.parse(localStorage.getItem("done-"+key))||{
 function saveDone(s){ try{localStorage.setItem("done-"+key, JSON.stringify(s));}catch(e){} }
 function isClosed(){ return localStorage.getItem("closed-"+key)==="1"; }
 function setClosed(){ try{localStorage.setItem("closed-"+key,"1");}catch(e){} }
+
+/* --- Horizon du jour ---
+   Les activités, catégories et éléments datés restent locaux à l'appareil.
+   Les choix sont enregistrés par date, sans statut de retard ni d'échec. */
+const HORIZON_STATE_KEY = "horizon-state-v1";
+const HORIZON_CHOICE_PREFIX = "horizon-choices-";
+
+const DEFAULT_HORIZON_STATE = {
+  version: 2,
+  categories: [
+    { id:"warhammer", name:"⚔️ Warhammer Age of Sigmar" },
+    { id:"vr", name:"🥽 Jeux vidéo — VR" },
+    { id:"flat-games", name:"🎮 Jeux vidéo — écran plat" },
+    { id:"media", name:"🎲 Jeux, films et séries" },
+    { id:"projects", name:"✍️ Projets et création" },
+    { id:"movement", name:"🏃 Mouvement et plein air" },
+    { id:"restoration", name:"🌿 Ressourcement et lien" },
+    { id:"shared", name:"🤝 Sorties et moments partagés" },
+  ],
+  activities: [
+    { id:"warhammer-paint", categoryId:"warhammer", title:"Peinture", note:"", schedule:{mode:"any"} },
+    { id:"warhammer-play", categoryId:"warhammer", title:"Jeu", note:"", schedule:{mode:"any"} },
+    { id:"warhammer-build", categoryId:"warhammer", title:"Assemblage", note:"", schedule:{mode:"any"} },
+    { id:"warhammer-list", categoryId:"warhammer", title:"Création de liste", note:"", schedule:{mode:"any"} },
+
+    { id:"vr-headset", categoryId:"vr", title:"Jouer avec le casque VR", note:"", schedule:{mode:"any"} },
+    { id:"vr-test-pc", categoryId:"vr", title:"Tester les jeux VR téléchargés", note:"Sur le PC de la salle de jeu", schedule:{mode:"any"} },
+
+    { id:"game-dragon-age", categoryId:"flat-games", title:"Dragon Age", note:"", schedule:{mode:"any"} },
+    { id:"game-triangle-strategy", categoryId:"flat-games", title:"Triangle Strategy", note:"", schedule:{mode:"any"} },
+    { id:"game-eiyuden", categoryId:"flat-games", title:"Eiyuden Chronicle", note:"", schedule:{mode:"any"} },
+    { id:"game-elden-ring", categoryId:"flat-games", title:"Elden Ring", note:"", schedule:{mode:"any"} },
+    { id:"game-clone-hero", categoryId:"flat-games", title:"Clone Hero", note:"Dans l’esprit de Guitar Hero", schedule:{mode:"any"} },
+    { id:"game-stage-tour", categoryId:"flat-games", title:"Stage Tour", note:"À garder en tête pour l’automne 2026 — date non vérifiée", schedule:{mode:"any"} },
+
+    { id:"wow-cards", categoryId:"media", title:"Ranger mes cartes de jeu World of Warcraft", note:"", schedule:{mode:"any"} },
+    { id:"downloaded-films", categoryId:"media", title:"Regarder des films et séries téléchargés", note:"Liste précise encore à établir", schedule:{mode:"any"} },
+
+    { id:"sort-photos", categoryId:"projects", title:"Trier mes photos", note:"", schedule:{mode:"any"} },
+    { id:"essential-oils", categoryId:"projects", title:"Continuer mon travail sur les huiles essentielles", note:"", schedule:{mode:"any"} },
+    { id:"writing", categoryId:"projects", title:"Continuer mon travail d’écriture", note:"", schedule:{mode:"any"} },
+
+    { id:"plan-outdoors", categoryId:"movement", title:"Programmer des balades, des courses à pied et des randonnées", note:"", schedule:{mode:"any"} },
+    { id:"yoga", categoryId:"movement", title:"Faire du yoga", note:"", schedule:{mode:"any"} },
+    { id:"strength", categoryId:"movement", title:"Faire du renforcement musculaire", note:"", schedule:{mode:"any"} },
+
+    { id:"emotional-rest", categoryId:"restoration", title:"Me ressourcer émotionnellement", note:"", schedule:{mode:"any"} },
+    { id:"friend", categoryId:"restoration", title:"Parler avec un ami", note:"", schedule:{mode:"any"} },
+    { id:"animal", categoryId:"restoration", title:"Caresser ou observer un animal", note:"", schedule:{mode:"any"} },
+    { id:"meditation", categoryId:"restoration", title:"Faire de la méditation", note:"", schedule:{mode:"any"} },
+
+    { id:"cinema-damien", categoryId:"shared", title:"Organiser une soirée cinéma avec Damien", note:"", schedule:{mode:"any"} },
+  ],
+  datedItems: []
+};
+
+function cloneDefaultHorizonState(){
+  return JSON.parse(JSON.stringify(DEFAULT_HORIZON_STATE));
+}
+
+function loadHorizonState(){
+  try{
+    const parsed = JSON.parse(localStorage.getItem(HORIZON_STATE_KEY));
+    if(parsed && (parsed.version===1 || parsed.version===2)
+      && Array.isArray(parsed.categories) && Array.isArray(parsed.activities)){
+      const migrated = {
+        version: 2,
+        categories: parsed.categories,
+        activities: parsed.activities,
+        datedItems: Array.isArray(parsed.datedItems) ? parsed.datedItems : []
+      };
+      try{ localStorage.setItem(HORIZON_STATE_KEY, JSON.stringify(migrated)); }catch(e){}
+      return migrated;
+    }
+  }catch(e){}
+  const initial = cloneDefaultHorizonState();
+  try{ localStorage.setItem(HORIZON_STATE_KEY, JSON.stringify(initial)); }catch(e){}
+  return initial;
+}
+
+function saveHorizonState(){
+  try{ localStorage.setItem(HORIZON_STATE_KEY, JSON.stringify(horizonState)); }catch(e){}
+}
+
+function loadHorizonChoices(choiceKey=key){
+  try{
+    const value = JSON.parse(localStorage.getItem(HORIZON_CHOICE_PREFIX+choiceKey));
+    return new Set(Array.isArray(value) ? value : []);
+  }catch(e){
+    return new Set();
+  }
+}
+
+function saveHorizonChoices(choices, choiceKey=key){
+  try{ localStorage.setItem(HORIZON_CHOICE_PREFIX+choiceKey, JSON.stringify([...choices])); }catch(e){}
+}
+
+function newLocalId(prefix){
+  if(window.crypto && typeof window.crypto.randomUUID==="function"){
+    return prefix+"-"+window.crypto.randomUUID();
+  }
+  return prefix+"-"+Date.now()+"-"+Math.random().toString(16).slice(2);
+}
+
+function normalizeExpiredSuggestions(){
+  let changed = false;
+  horizonState.activities.forEach(activity=>{
+    const schedule = activity.schedule || {mode:"any"};
+    if(schedule.mode==="date" && schedule.date && schedule.date < key){
+      activity.schedule = {mode:"any"};
+      changed = true;
+    }
+  });
+  if(changed) saveHorizonState();
+}
+
+function removeExpiredDatedItems(){
+  const items = Array.isArray(horizonState.datedItems) ? horizonState.datedItems : [];
+  const remaining = items.filter(item=>item && item.date && item.date>=key);
+  if(remaining.length!==items.length){
+    horizonState.datedItems = remaining;
+    saveHorizonState();
+  }
+}
+
+function activityAppearsToday(activity){
+  const schedule = activity.schedule || {mode:"any"};
+  if(schedule.mode==="date") return schedule.date===key;
+  if(schedule.mode==="weekdays") return Array.isArray(schedule.days) && schedule.days.includes(today.getDay());
+  return true;
+}
+
+function escapeHTML(value){
+  return String(value ?? "").replace(/[&<>"']/g, char=>({
+    "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#039;"
+  })[char]);
+}
+
+let horizonState = loadHorizonState();
 
 /* --- Synchronisation Firebase ---
    On utilise window.memoSync exposé par firebase.js (module).
@@ -316,6 +697,423 @@ async function pushState(){
 
 const app = document.getElementById("app");
 const doneScreen = document.getElementById("done-screen");
+const pageViewport = document.getElementById("page-viewport");
+const routinePage = document.getElementById("routine-page");
+const horizonPage = document.getElementById("horizon-page");
+const horizonSections = document.getElementById("horizon-sections");
+const datedItemsToday = document.getElementById("dated-items-today");
+const routineActions = document.getElementById("routine-actions");
+const horizonActions = document.getElementById("horizon-actions");
+const managerDialog = document.getElementById("manager-dialog");
+const activityDialog = document.getElementById("activity-dialog");
+const datedItemDialog = document.getElementById("dated-item-dialog");
+let activePage = 0;
+let pageScrollFrame = null;
+
+function updatePageUI(){
+  routineActions.hidden = activePage!==0;
+  horizonActions.hidden = activePage!==1;
+  document.querySelectorAll(".page-dot").forEach(dot=>{
+    const selected = Number(dot.dataset.page)===activePage;
+    dot.classList.toggle("active", selected);
+    dot.setAttribute("aria-current", selected ? "page" : "false");
+  });
+}
+
+function scrollToPage(page, smooth=true){
+  activePage = page===1 ? 1 : 0;
+  pageViewport.scrollTo({
+    left: activePage*pageViewport.clientWidth,
+    behavior: smooth ? "smooth" : "auto"
+  });
+  updatePageUI();
+}
+
+function scrollActiveToTop(){
+  const target = activePage===1 ? horizonPage : routinePage;
+  target.scrollTo({top:0, behavior:"smooth"});
+}
+
+pageViewport.addEventListener("scroll", ()=>{
+  if(pageScrollFrame) return;
+  pageScrollFrame = requestAnimationFrame(()=>{
+    pageScrollFrame = null;
+    const page = Math.round(pageViewport.scrollLeft/Math.max(1,pageViewport.clientWidth));
+    if(page!==activePage){
+      activePage = page;
+      updatePageUI();
+    }
+  });
+}, {passive:true});
+
+document.querySelectorAll(".page-dot").forEach(dot=>{
+  dot.addEventListener("click", ()=> scrollToPage(Number(dot.dataset.page)));
+});
+
+window.addEventListener("resize", ()=> scrollToPage(activePage, false));
+updatePageUI();
+
+function scheduleDescription(schedule){
+  const value = schedule || {mode:"any"};
+  if(value.mode==="date" && value.date){
+    return shortDate(value.date);
+  }
+  if(value.mode==="weekdays" && Array.isArray(value.days)){
+    const names = ["dim","lun","mar","mer","jeu","ven","sam"];
+    return value.days.map(day=>names[day]).filter(Boolean).join(", ") || "jours à choisir";
+  }
+  return "tous les jours";
+}
+
+function shortDate(dateValue){
+  const parts = String(dateValue || "").split("-");
+  return parts.length===3 ? `${parts[2]}/${parts[1]}/${parts[0]}` : String(dateValue || "");
+}
+
+function renderDatedItems(){
+  removeExpiredDatedItems();
+  const items = horizonState.datedItems
+    .filter(item=>item.date===key)
+    .sort((a,b)=>a.title.localeCompare(b.title, "fr"));
+
+  if(!items.length){
+    datedItemsToday.innerHTML = `<div class="calendar-empty">
+      Rien n’est ajouté manuellement pour aujourd’hui.
+    </div>`;
+    return;
+  }
+
+  datedItemsToday.innerHTML = `<ul class="lst">${items.map(item=>{
+    const note = item.note
+      ? `<span class="sub">${escapeHTML(item.note)}</span>`
+      : "";
+    return `<li class="it dated-it">
+      <span class="box">📌</span>
+      <span class="t"><b>${escapeHTML(item.title)}</b>${note}</span>
+      <button class="edit-activity" type="button" data-edit-dated-id="${escapeHTML(item.id)}"
+        aria-label="Modifier ${escapeHTML(item.title)}">✎</button>
+    </li>`;
+  }).join("")}</ul>`;
+
+  datedItemsToday.querySelectorAll("[data-edit-dated-id]").forEach(button=>{
+    button.addEventListener("click", ()=> openDatedItemEditor(button.dataset.editDatedId));
+  });
+}
+
+function renderHorizon(){
+  document.getElementById("horizon-day").textContent = frDate(today);
+  normalizeExpiredSuggestions();
+  renderDatedItems();
+
+  const choices = loadHorizonChoices();
+  const visible = horizonState.activities.filter(activityAppearsToday);
+  let html = "";
+
+  horizonState.categories.forEach(category=>{
+    const items = visible.filter(activity=>activity.categoryId===category.id);
+    if(!items.length) return;
+    html += `<details class="sec" open>
+      <summary>${escapeHTML(category.name)}
+        <span class="cnt">${items.length}</span><span class="chev">▶</span>
+      </summary><ul class="lst">`;
+    items.forEach(activity=>{
+      const chosen = choices.has(activity.id);
+      const note = activity.note
+        ? `<span class="sub">${escapeHTML(activity.note)}</span>`
+        : "";
+      html += `<li class="it horizon-it${chosen?" chosen":""}" data-activity-id="${escapeHTML(activity.id)}">
+        <span class="box">✦</span>
+        <span class="t"><b>${escapeHTML(activity.title)}</b>${note}</span>
+        <button class="edit-activity" type="button" data-edit-id="${escapeHTML(activity.id)}"
+          aria-label="Modifier ${escapeHTML(activity.title)}">✎</button>
+      </li>`;
+    });
+    html += `</ul></details>`;
+  });
+
+  if(!html){
+    html = `<div class="sec horizon-empty">Aucune possibilité n’est proposée pour ce jour.
+      Tu peux en ajouter ou modifier leurs jours d’apparition.</div>`;
+  }
+  horizonSections.innerHTML = html;
+
+  horizonSections.querySelectorAll(".horizon-it").forEach(row=>{
+    row.addEventListener("click", event=>{
+      if(event.target.closest(".edit-activity")) return;
+      toggleHorizonChoice(row.dataset.activityId);
+    });
+  });
+  horizonSections.querySelectorAll(".edit-activity").forEach(button=>{
+    button.addEventListener("click", event=>{
+      event.stopPropagation();
+      openActivityEditor(button.dataset.editId);
+    });
+  });
+}
+
+function toggleHorizonChoice(activityId){
+  const choices = loadHorizonChoices();
+  if(choices.has(activityId)) choices.delete(activityId);
+  else choices.add(activityId);
+  saveHorizonChoices(choices);
+  renderHorizon();
+}
+
+function renderManager(){
+  const list = document.getElementById("manager-list");
+  removeExpiredDatedItems();
+  let html = "";
+  horizonState.categories.forEach(category=>{
+    const items = horizonState.activities.filter(activity=>activity.categoryId===category.id);
+    html += `<section class="manager-group"><h3>${escapeHTML(category.name)}</h3>`;
+    if(items.length){
+      items.forEach(activity=>{
+        html += `<button class="manager-row" type="button" data-manage-id="${escapeHTML(activity.id)}">
+          <span>${escapeHTML(activity.title)}<small>${escapeHTML(scheduleDescription(activity.schedule))}</small></span>
+          <i>✎</i>
+        </button>`;
+      });
+    }else{
+      html += `<div class="calendar-empty">Catégorie vide.</div>`;
+    }
+    html += `</section>`;
+  });
+  const dated = [...horizonState.datedItems].sort((a,b)=>
+    a.date.localeCompare(b.date) || a.title.localeCompare(b.title, "fr")
+  );
+  html += `<section class="manager-group"><h3>📅 Éléments uniques datés</h3>`;
+  if(dated.length){
+    dated.forEach(item=>{
+      html += `<button class="manager-row" type="button" data-manage-dated-id="${escapeHTML(item.id)}">
+        <span>${escapeHTML(item.title)}<small>${escapeHTML(shortDate(item.date))}</small></span>
+        <i>✎</i>
+      </button>`;
+    });
+  }else{
+    html += `<div class="calendar-empty">Aucun élément daté à venir.</div>`;
+  }
+  html += `</section>`;
+  list.innerHTML = html;
+  list.querySelectorAll("[data-manage-id]").forEach(button=>{
+    button.addEventListener("click", ()=>{
+      managerDialog.close();
+      openActivityEditor(button.dataset.manageId);
+    });
+  });
+  list.querySelectorAll("[data-manage-dated-id]").forEach(button=>{
+    button.addEventListener("click", ()=>{
+      managerDialog.close();
+      openDatedItemEditor(button.dataset.manageDatedId);
+    });
+  });
+}
+
+function openActivityManager(){
+  renderManager();
+  document.getElementById("new-category-name").value = "";
+  if(!managerDialog.open) managerDialog.showModal();
+}
+
+function populateCategorySelect(selectedId=""){
+  const select = document.getElementById("activity-category");
+  select.innerHTML = horizonState.categories.map(category=>
+    `<option value="${escapeHTML(category.id)}">${escapeHTML(category.name)}</option>`
+  ).join("");
+  if(selectedId && horizonState.categories.some(category=>category.id===selectedId)){
+    select.value = selectedId;
+  }
+}
+
+function updateScheduleFields(){
+  const mode = document.querySelector('input[name="schedule-mode"]:checked')?.value || "any";
+  document.getElementById("weekday-fields").hidden = mode!=="weekdays";
+  document.getElementById("date-field").hidden = mode!=="date";
+}
+
+function openActivityEditor(activityId=""){
+  const form = document.getElementById("activity-form");
+  const activity = horizonState.activities.find(item=>item.id===activityId);
+  form.reset();
+  document.getElementById("activity-id").value = activity ? activity.id : "";
+  document.getElementById("activity-dialog-title").textContent =
+    activity ? "Modifier l’activité" : "Ajouter une activité";
+  document.getElementById("activity-title").value = activity?.title || "";
+  document.getElementById("activity-note").value = activity?.note || "";
+  populateCategorySelect(activity?.categoryId || horizonState.categories[0]?.id || "");
+  document.getElementById("activity-form-error").textContent = "";
+
+  const schedule = activity?.schedule || {mode:"any"};
+  const radio = document.querySelector(`input[name="schedule-mode"][value="${schedule.mode}"]`)
+    || document.querySelector('input[name="schedule-mode"][value="any"]');
+  radio.checked = true;
+  document.querySelectorAll('input[name="weekday"]').forEach(input=>{
+    input.checked = schedule.mode==="weekdays" && Array.isArray(schedule.days)
+      ? schedule.days.includes(Number(input.value))
+      : false;
+  });
+  const dateInput = document.getElementById("activity-date");
+  dateInput.min = key;
+  dateInput.value = schedule.mode==="date" ? (schedule.date || key) : key;
+  updateScheduleFields();
+  if(!activityDialog.open) activityDialog.showModal();
+  setTimeout(()=> document.getElementById("activity-title").focus(), 0);
+}
+
+function openDatedItemEditor(itemId=""){
+  const form = document.getElementById("dated-item-form");
+  const item = horizonState.datedItems.find(entry=>entry.id===itemId);
+  form.reset();
+  document.getElementById("dated-item-id").value = item ? item.id : "";
+  document.getElementById("dated-item-dialog-title").textContent =
+    item ? "Modifier l’élément daté" : "Ajouter un élément daté";
+  document.getElementById("dated-item-title").value = item?.title || "";
+  document.getElementById("dated-item-note").value = item?.note || "";
+  const dateInput = document.getElementById("dated-item-date");
+  dateInput.min = key;
+  dateInput.value = item?.date || key;
+  document.getElementById("dated-item-form-error").textContent = "";
+  document.getElementById("delete-dated-item").hidden = !item;
+  if(!datedItemDialog.open) datedItemDialog.showModal();
+  setTimeout(()=> document.getElementById("dated-item-title").focus(), 0);
+}
+
+function addCategory(){
+  const input = document.getElementById("new-category-name");
+  const name = input.value.trim();
+  if(!name){
+    input.focus();
+    return;
+  }
+  if(horizonState.categories.some(category=>category.name.toLocaleLowerCase("fr")===name.toLocaleLowerCase("fr"))){
+    input.select();
+    return;
+  }
+  horizonState.categories.push({id:newLocalId("category"), name});
+  saveHorizonState();
+  input.value = "";
+  renderManager();
+}
+
+document.getElementById("add-category-button").addEventListener("click", addCategory);
+document.getElementById("new-category-name").addEventListener("keydown", event=>{
+  if(event.key==="Enter"){
+    event.preventDefault();
+    addCategory();
+  }
+});
+document.getElementById("manager-add-activity").addEventListener("click", ()=>{
+  managerDialog.close();
+  openActivityEditor();
+});
+document.getElementById("manager-add-dated-item").addEventListener("click", ()=>{
+  managerDialog.close();
+  openDatedItemEditor();
+});
+document.getElementById("add-dated-item-inline").addEventListener("click", ()=> openDatedItemEditor());
+
+document.querySelectorAll('input[name="schedule-mode"]').forEach(input=>{
+  input.addEventListener("change", updateScheduleFields);
+});
+
+document.getElementById("activity-form").addEventListener("submit", event=>{
+  event.preventDefault();
+  const error = document.getElementById("activity-form-error");
+  const id = document.getElementById("activity-id").value;
+  const title = document.getElementById("activity-title").value.trim();
+  const note = document.getElementById("activity-note").value.trim();
+  const categoryId = document.getElementById("activity-category").value;
+  const mode = document.querySelector('input[name="schedule-mode"]:checked')?.value || "any";
+  let schedule = {mode:"any"};
+
+  if(!title || !horizonState.categories.some(category=>category.id===categoryId)){
+    error.textContent = "Indique une activité et sa catégorie.";
+    return;
+  }
+  if(mode==="weekdays"){
+    const days = [...document.querySelectorAll('input[name="weekday"]:checked')]
+      .map(input=>Number(input.value));
+    if(!days.length){
+      error.textContent = "Choisis au moins un jour de la semaine.";
+      return;
+    }
+    schedule = {mode:"weekdays", days};
+  }else if(mode==="date"){
+    const date = document.getElementById("activity-date").value;
+    if(!date){
+      error.textContent = "Choisis la date à laquelle cette possibilité sera mise en avant.";
+      return;
+    }
+    schedule = {mode:"date", date};
+  }
+
+  const existing = horizonState.activities.find(activity=>activity.id===id);
+  if(existing){
+    existing.title = title;
+    existing.note = note;
+    existing.categoryId = categoryId;
+    existing.schedule = schedule;
+  }else{
+    horizonState.activities.push({
+      id:newLocalId("activity"), categoryId, title, note, schedule
+    });
+  }
+  saveHorizonState();
+  activityDialog.close();
+  renderHorizon();
+});
+
+document.getElementById("dated-item-form").addEventListener("submit", event=>{
+  event.preventDefault();
+  const error = document.getElementById("dated-item-form-error");
+  const id = document.getElementById("dated-item-id").value;
+  const title = document.getElementById("dated-item-title").value.trim();
+  const note = document.getElementById("dated-item-note").value.trim();
+  const date = document.getElementById("dated-item-date").value;
+
+  if(!title || !date){
+    error.textContent = "Indique un élément et sa date.";
+    return;
+  }
+  if(date<key){
+    error.textContent = "Choisis aujourd’hui ou une date à venir.";
+    return;
+  }
+
+  const existing = horizonState.datedItems.find(item=>item.id===id);
+  if(existing){
+    existing.title = title;
+    existing.note = note;
+    existing.date = date;
+  }else{
+    horizonState.datedItems.push({id:newLocalId("dated"), title, note, date});
+  }
+  saveHorizonState();
+  datedItemDialog.close();
+  renderHorizon();
+});
+
+document.getElementById("delete-dated-item").addEventListener("click", ()=>{
+  const id = document.getElementById("dated-item-id").value;
+  const item = horizonState.datedItems.find(entry=>entry.id===id);
+  if(!item || !confirm(`Supprimer « ${item.title} » ?`)) return;
+  horizonState.datedItems = horizonState.datedItems.filter(entry=>entry.id!==id);
+  saveHorizonState();
+  datedItemDialog.close();
+  renderHorizon();
+});
+
+document.querySelectorAll("[data-close-dialog]").forEach(button=>{
+  button.addEventListener("click", ()=>{
+    const dialog = document.getElementById(button.dataset.closeDialog);
+    if(dialog?.open) dialog.close();
+  });
+});
+
+[managerDialog, activityDialog, datedItemDialog].forEach(dialog=>{
+  dialog.addEventListener("click", event=>{
+    if(event.target===dialog) dialog.close();
+  });
+});
 
 function buildItemHTML(it, idx){
   const cls = ["it"];
@@ -379,7 +1177,7 @@ function render(){
   app.innerHTML = html;
 
   const done = loadDone();
-  document.querySelectorAll(".it").forEach(el=>{
+  app.querySelectorAll(".it").forEach(el=>{
     const idx = el.dataset.idx;
     const close = el.dataset.close;
     const id = close ? "close" : idx;
@@ -389,7 +1187,7 @@ function render(){
     }
   });
 
-  document.querySelectorAll(".it").forEach(el=>{
+  app.querySelectorAll(".it").forEach(el=>{
     el.addEventListener("click", ()=> onItemClick(el));
   });
 
@@ -411,7 +1209,7 @@ function onItemClick(el){
     pushState();
     setTimeout(()=>{
       render();
-      window.scrollTo({top:0,behavior:"smooth"});
+      routinePage.scrollTo({top:0,behavior:"smooth"});
     }, 450);
     return;
   }
@@ -425,7 +1223,7 @@ function onItemClick(el){
 }
 
 function updateCounts(){
-  document.querySelectorAll(".sec").forEach(sec=>{
+  app.querySelectorAll(".sec").forEach(sec=>{
     const items = sec.querySelectorAll(".it");
     const remaining = sec.querySelectorAll(".it:not(.removing):not(.done)").length;
     const cnt = sec.querySelector("[data-cnt]");
@@ -435,8 +1233,8 @@ function updateCounts(){
 }
 
 function updateProg(){
-  const all = document.querySelectorAll(".it:not([data-close]):not(.alerte):not(.recette):not(.acu):not(.lien):not(.croy):not(.cycle)");
-  const doneN = document.querySelectorAll(".it.done:not([data-close]):not(.alerte):not(.recette):not(.acu):not(.lien):not(.croy):not(.cycle)");
+  const all = app.querySelectorAll(".it:not([data-close]):not(.alerte):not(.recette):not(.acu):not(.lien):not(.croy):not(.cycle)");
+  const doneN = app.querySelectorAll(".it.done:not([data-close]):not(.alerte):not(.recette):not(.acu):not(.lien):not(.croy):not(.cycle)");
   const total = all.length;
   const pct = total?Math.round(doneN.length/total*100):0;
   document.getElementById("prog").textContent = doneN.length+"/"+total;
@@ -452,8 +1250,7 @@ function resetDay(){
 
 /* Force la mise à jour de l'app : déclenche le SW, prend le contrôle, recharge.
    Les cochages du jour sont conservés (stockés par date dans localStorage). */
-function forceUpdate(){
-  const btn=event.target;
+function forceUpdate(btn){
   const original=btn.textContent;
   btn.textContent="⏳…";
   btn.disabled=true;
@@ -531,11 +1328,13 @@ setInterval(()=>{
   if(now.getTime() !== today.getTime()){
     today = now; key = localDateKey(today);
     render();
+    renderHorizon();
     initSync(); // réécouter le nouveau jour
   }
 }, 60000);
 
 render();
+renderHorizon();
 waitForSync(initSync); // démarrer la synchro Firebase dès que dispo
 </script>
 </body>
