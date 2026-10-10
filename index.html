@@ -1337,5 +1337,17 @@ render();
 renderHorizon();
 waitForSync(initSync); // démarrer la synchro Firebase dès que dispo
 </script>
+// Bouton « Installer l'application » (prompt natif Chrome)
+let deferredPrompt=null;
+window.addEventListener('beforeinstallprompt',e=>{
+  e.preventDefault();deferredPrompt=e;
+  if(window.matchMedia('(display-mode: standalone)').matches)return;
+  let b=document.getElementById('installBtn');
+  if(!b){b=document.createElement('button');b.id='installBtn';b.textContent='📲 Installer l'application';
+    b.style.cssText='position:fixed;bottom:18px;right:18px;z-index:9999;background:linear-gradient(135deg,#e8a06a,#d88a52);color:#241d17;border:none;border-radius:999px;padding:12px 18px;font-weight:700;font-size:.9rem;box-shadow:0 6px 18px rgba(0,0,0,.45);cursor:pointer';
+    document.body.appendChild(b);}
+  b.onclick=async()=>{if(!deferredPrompt)return;deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null;b.remove();};
+});
+</script>
 </body>
 </html>
